@@ -12,12 +12,19 @@ Hệ thống quản lý kỳ thi được phát triển bằng Java, hỗ trợ 
 
 ## Cấu trúc dự án
 ```
-src/QuanLyKyThi/
-├── KyThi.java          # Class quản lý kỳ thi
-├── ThiSinh.java        # Class quản lý thí sinh
-├── GiamThi.java        # Class quản lý giám thị
-├── KetQua.java         # Class quản lý kết quả thi
-└── PhieuDangKy.java    # Class quản lý phiếu đăng ký
+src/
+├── QuanLyKyThi/
+│   ├── KyThi.java          # Class quản lý kỳ thi
+│   ├── ThiSinh.java        # Class quản lý thí sinh
+│   ├── GiamThi.java        # Class quản lý giám thị
+│   ├── KetQua.java         # Class quản lý kết quả thi
+│   ├── PhieuDangKy.java    # Class quản lý phiếu đăng ký
+│   ├── MainGUI.java        # Giao diện chính
+│   ├── AddKyThiForm.java   # Form thêm kỳ thi
+│   ├── KyThiListForm.java  # Form danh sách kỳ thi
+│   └── StubForms.java      # Các form phụ
+└── demo/
+    └── Demo.java           # File demo
 ```
 
 ## Các class chính
