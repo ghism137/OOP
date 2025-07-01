@@ -9,6 +9,8 @@ Hệ thống quản lý kỳ thi được phát triển bằng Java, hỗ trợ 
 - **📝 Quản lý Kỳ thi**: Tạo kỳ thi, thêm thí sinh và giám thị với phí riêng biệt
 - **👨‍🏫 Quản lý Giám thị**: Phân công giám thị cho các kỳ thi
 - **📊 Quản lý Kết quả**: Nhập điểm và xem kết quả thi
+- **⚡ Quản lý Trạng thái Bài thi**: Theo dõi chi tiết trạng thái từng bài thi (chưa thi → đang thi → đã nộp → chưa chấm → đang chấm → đã chấm)
+- **🔒 Phân quyền nhập điểm**: Admin, Giáo vụ, Giám thị có quyền khác nhau trong việc chấm bài và nhập điểm
 - **📋 Phiếu đăng ký**: Tự động tạo phiếu đăng ký và xác nhận đóng phí
 - **💾 Cơ sở dữ liệu XML**: Lưu trữ dữ liệu persistent trong các file XML
 
@@ -33,6 +35,7 @@ src/
 │   │   ├── MainGUIWithAuth.java    # Giao diện chính với authentication
 │   │   ├── AddKyThiForm.java       # Form thêm kỳ thi
 │   │   ├── KyThiListForm.java      # Form danh sách kỳ thi
+│   │   ├── QuanLyTrangThaiBaiThiForm.java  # Form quản lý trạng thái bài thi
 │   │   └── StubForms.java          # Các form phụ (stub)
 │   └── demo/
 │       └── Demo.java               # File demo
@@ -188,15 +191,60 @@ QuanLyKyThi_1/
 - **User**: `user1/user123` - Xem thông tin, đăng ký thi
 
 ### Phân quyền:
-| Chức năng | Admin | Giáo vụ | User |
-|-----------|-------|---------|------|
-| Quản lý tài khoản | ✅ | ❌ | ❌ |
-| Thêm/sửa kỳ thi | ✅ | ✅ | ❌ |
-| Quản lý giám thị | ✅ | ✅ | ❌ |
-| Nhập điểm | ✅ | ✅ | ❌ |
-| Xem kỳ thi | ✅ | ✅ | ✅ |
-| Đăng ký thi | ✅ | ✅ | ✅ |
-| Xem kết quả | ✅ | ✅ | ✅ |
+| Chức năng | Admin | Giáo vụ | Giám thị | User |
+|-----------|-------|---------|----------|------|
+| Quản lý tài khoản | ✅ | ❌ | ❌ | ❌ |
+| Thêm/sửa kỳ thi | ✅ | ✅ | ❌ | ❌ |
+| Quản lý giám thị | ✅ | ✅ | ❌ | ❌ |
+| Bắt đầu thi | ✅ | ❌ | ✅ | ❌ |
+| Nộp bài thi | ✅ | ❌ | ✅ | ❌ |
+| Bắt đầu chấm bài | ✅ | ✅ | ✅* | ❌ |
+| Nhập điểm | ✅ | ✅ | ✅* | ❌ |
+| Cập nhật điểm | ✅ | ✅ | ❌** | ❌ |
+| Xem kỳ thi | ✅ | ✅ | ✅ | ✅ |
+
+**Ghi chú:**
+- ✅* : Giám thị chỉ được chấm/nhập điểm cho kỳ thi được phân công
+- ❌** : Giám thị chỉ được cập nhật điểm bài mình đã chấm
+
+## 📊 Hệ thống Trạng thái Bài thi
+
+### Quy trình trạng thái bài thi:
+```
+CHƯA THI → ĐANG THI → ĐÃ NỘP BÀI → CHƯA CHẤM → ĐANG CHẤM → ĐÃ CHẤM
+```
+
+### Chi tiết các trạng thái:
+
+| Trạng thái | Mô tả | Thao tác được phép |
+|------------|-------|-------------------|
+| **CHƯA THI** | Thí sinh chưa bắt đầu làm bài | Bắt đầu thi |
+| **ĐANG THI** | Thí sinh đang làm bài thi | Nộp bài |
+| **ĐÃ NỘP BÀI** | Thí sinh đã nộp bài | Tự động chuyển sang "Chưa chấm" |
+| **CHƯA CHẤM** | Bài thi chờ được chấm | Bắt đầu chấm |
+| **ĐANG CHẤM** | Bài thi đang được chấm | Nhập điểm |
+| **ĐÃ CHẤM** | Bài thi đã hoàn thành chấm | Xem kết quả, Cập nhật điểm |
+
+### Quyền thao tác theo role:
+
+**🔑 Admin:**
+- Toàn quyền tất cả trạng thái
+- Có thể cập nhật điểm bất kỳ bài thi nào
+
+**📋 Giáo vụ:**
+- Bắt đầu chấm, nhập điểm, cập nhật điểm
+- Không thể bắt đầu thi hoặc nộp bài (thuộc về thí sinh/giám thị)
+
+**👨‍🏫 Giám thị:**
+- Bắt đầu thi, nộp bài (giám sát thí sinh)
+- Chấm bài và nhập điểm cho kỳ thi được phân công
+- Chỉ cập nhật được điểm bài mình đã chấm
+
+### Form Quản lý Trạng thái:
+```java
+// Mở form quản lý trạng thái
+java -cp src QuanLyKyThi.DemoTrangThaiBaiThi
+```
 
 ## 💾 Cơ sở dữ liệu XML
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ketQuaList>
+  <ketQua>
+    <maThiSinh>TS001</maThiSinh>
+    <tenThiSinh>Nguyễn Văn An</tenThiSinh>
+    <maKyThi>KT001</maKyThi>
+    <tenKyThi>Kỳ thi Java OOP</tenKyThi>
+    <diem>8.5</diem>
+    <xepLoai>Giỏi</xepLoai>
+  </ketQua>
+  <ketQua>
+    <maThiSinh>TS002</maThiSinh>
+    <tenThiSinh>Trần Thị Bình</tenThiSinh>
+    <maKyThi>KT001</maKyThi>
+    <tenKyThi>Kỳ thi Java OOP</tenKyThi>
+    <diem>7.0</diem>
+    <xepLoai>Khá</xepLoai>
+  </ketQua>
+</ketQuaList>

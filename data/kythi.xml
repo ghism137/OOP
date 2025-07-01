@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<kyThiList>
+  <kyThi>
+    <maKyThi>KT001</maKyThi>
+    <tenKyThi>Kỳ thi Java OOP</tenKyThi>
+    <ngayToChuc>2025-08-15</ngayToChuc>
+    <tinhTrang>Sắp diễn ra</tinhTrang>
+    <phiDangKy>150.0</phiDangKy>
+  </kyThi>
+  <kyThi>
+    <maKyThi>KT002</maKyThi>
+    <tenKyThi>Kỳ thi Cấu trúc dữ liệu</tenKyThi>
+    <ngayToChuc>2025-09-10</ngayToChuc>
+    <tinhTrang>Sắp diễn ra</tinhTrang>
+    <phiDangKy>120.0</phiDangKy>
+  </kyThi>
+</kyThiList>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<giamThiList>
+  <giamThi>
+    <maGiamThi>GT001</maGiamThi>
+    <hoTen>Lê Văn Cường</hoTen>
+    <donVi>Phòng Giáo dục</donVi>
+    <sdt>0111222333</sdt>
+  </giamThi>
+  <giamThi>
+    <maGiamThi>GT002</maGiamThi>
+    <hoTen>Phạm Thị Dung</hoTen>
+    <donVi>Trường ĐHCN</donVi>
+    <sdt>0444555666</sdt>
+  </giamThi>
+</giamThiList>

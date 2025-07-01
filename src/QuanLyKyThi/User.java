@@ -48,6 +48,11 @@ public class User {
     public boolean isActive() { return isActive; }
     public void setActive(boolean active) { isActive = active; }
 
+    // Convenience method
+    public String getFullName() {
+        return hoTen;
+    }
+
     @Override
     public String toString() {
         return "User{" +

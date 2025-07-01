@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<users>
+  <user>
+    <username>admin</username>
+    <password>admin123</password>
+    <hoTen>Quản trị viên hệ thống</hoTen>
+    <email>admin@email.com</email>
+    <role>admin</role>
+    <isActive>true</isActive>
+  </user>
+  <user>
+    <username>giaovu</username>
+    <password>gv123</password>
+    <hoTen>Phòng Giáo vụ</hoTen>
+    <email>giaovu@email.com</email>
+    <role>giaovu</role>
+    <isActive>true</isActive>
+  </user>
+  <user>
+    <username>giaovu2</username>
+    <password>gv456</password>
+    <hoTen>Nhân viên Giáo vụ</hoTen>
+    <email>giaovu2@email.com</email>
+    <role>giaovu</role>
+    <isActive>true</isActive>
+  </user>
+  <user>
+    <username>user1</username>
+    <password>user123</password>
+    <hoTen>Người dùng thường</hoTen>
+    <email>user1@email.com</email>
+    <role>user</role>
+    <isActive>true</isActive>
+  </user>
+  <user>
+    <username>user2</username>
+    <password>user456</password>
+    <hoTen>Nhân viên văn phòng</hoTen>
+    <email>user2@email.com</email>
+    <role>user</role>
+    <isActive>true</isActive>
+  </user>
+  <user>
+    <username>thisinh1</username>
+    <password>ts123</password>
+    <hoTen>Nguyễn Văn An</hoTen>
+    <email>thisinh1@email.com</email>
+    <role>thisinh</role>
+    <isActive>true</isActive>
+  </user>
+  <user>
+    <username>thisinh2</username>
+    <password>ts456</password>
+    <hoTen>Trần Thị Bình</hoTen>
+    <email>thisinh2@email.com</email>
+    <role>thisinh</role>
+    <isActive>true</isActive>
+  </user>
+</users>

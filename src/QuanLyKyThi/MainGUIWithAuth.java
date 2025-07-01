@@ -126,9 +126,11 @@ public class MainGUIWithAuth extends JFrame {
         
         // Menu Kết Quả
         menuKetQua = new JMenu("Kết Quả");
+        JMenuItem itemQuanLyTrangThai = new JMenuItem("Quản Lý Trạng Thái Bài Thi");
         JMenuItem itemNhapDiem = new JMenuItem("Nhập Điểm");
         JMenuItem itemXemKetQua = new JMenuItem("Xem Kết Quả");
         JMenuItem itemThongKe = new JMenuItem("Thống Kê");
+        menuKetQua.add(itemQuanLyTrangThai);
         menuKetQua.add(itemNhapDiem);
         menuKetQua.add(itemXemKetQua);
         menuKetQua.add(itemThongKe);
@@ -168,7 +170,7 @@ public class MainGUIWithAuth extends JFrame {
         // Event handlers
         setupEventHandlers(itemDSKyThi, itemThemKyThi, itemDSThiSinh, itemThemThiSinh, 
                           itemDangKyThi, itemDSGiamThi, itemThemGiamThi, itemPhanCong,
-                          itemNhapDiem, itemXemKetQua, itemThongKe,
+                          itemQuanLyTrangThai, itemNhapDiem, itemXemKetQua, itemThongKe,
                           itemProfile, itemChangePassword, itemSaveData, itemLoadData,
                           itemLogout, itemExit);
     }
@@ -227,17 +229,18 @@ public class MainGUIWithAuth extends JFrame {
         items[7].addActionListener(e -> openPhanCongForm());
         
         // Kết quả
-        items[8].addActionListener(e -> openNhapDiemForm());
-        items[9].addActionListener(e -> openXemKetQuaForm());
-        items[10].addActionListener(e -> openThongKeForm());
+        items[8].addActionListener(e -> openQuanLyTrangThaiBaiThiForm());
+        items[9].addActionListener(e -> openNhapDiemForm());
+        items[10].addActionListener(e -> openXemKetQuaForm());
+        items[11].addActionListener(e -> openThongKeForm());
         
         // System
-        items[11].addActionListener(e -> showUserProfile());
-        items[12].addActionListener(e -> showChangePasswordDialog());
-        items[13].addActionListener(e -> saveDataToXML());
-        items[14].addActionListener(e -> loadDataFromXML());
-        items[15].addActionListener(e -> handleLogout());
-        items[16].addActionListener(e -> handleExit());
+        items[12].addActionListener(e -> showUserProfile());
+        items[13].addActionListener(e -> showChangePasswordDialog());
+        items[14].addActionListener(e -> saveDataToXML());
+        items[15].addActionListener(e -> loadDataFromXML());
+        items[16].addActionListener(e -> handleLogout());
+        items[17].addActionListener(e -> handleExit());
     }
     
     // Methods để mở các form (giống MainGUI cũ)
@@ -284,6 +287,14 @@ public class MainGUIWithAuth extends JFrame {
     private void openPhanCongForm() {
         PhanCongGiamThiForm form = new PhanCongGiamThiForm(danhSachGiamThi, danhSachKyThi);
         addInternalFrame(form, "Phân Công Giám Thị");
+    }
+    
+    private void openQuanLyTrangThaiBaiThiForm() {
+        // Mở form quản lý trạng thái bài thi với quyền phù hợp
+        QuanLyTrangThaiBaiThiForm form = new QuanLyTrangThaiBaiThiForm(authService.getCurrentUser());
+        
+        // Không sử dụng MDI để form này có thể hoạt động độc lập
+        form.setVisible(true);
     }
     
     private void openNhapDiemForm() {

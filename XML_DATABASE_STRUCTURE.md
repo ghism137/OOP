@@ -138,7 +138,7 @@ data/
 
 ---
 
-### **📊 ketqua.xml - Kết quả thi**
+### **📊 ketqua.xml - Kết quả thi với trạng thái chi tiết**
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <ketQuaList>
@@ -149,6 +149,12 @@ data/
         <tenKyThi>Kỳ thi Toán học</tenKyThi>
         <diem>8.5</diem>
         <xepLoai>Giỏi</xepLoai>
+        <trangThai>DA_CHAM</trangThai>
+        <nguoiCham>giaovu</nguoiCham>
+        <thoiGianBatDauThi>2024-12-15T08:00:00</thoiGianBatDauThi>
+        <thoiGianNopBai>2024-12-15T10:00:00</thoiGianNopBai>
+        <thoiGianCham>2024-12-15T14:30:00</thoiGianCham>
+        <ghiChu>Bài làm tốt, có sáng tạo</ghiChu>
     </ketQua>
     <ketQua>
         <maThiSinh>TS002</maThiSinh>
@@ -157,9 +163,37 @@ data/
         <tenKyThi>Kỳ thi Toán học</tenKyThi>
         <diem>7.0</diem>
         <xepLoai>Khá</xepLoai>
+        <trangThai>DA_CHAM</trangThai>
+        <nguoiCham>admin</nguoiCham>
+        <thoiGianBatDauThi>2024-12-15T08:00:00</thoiGianBatDauThi>
+        <thoiGianNopBai>2024-12-15T09:45:00</thoiGianNopBai>
+        <thoiGianCham>2024-12-15T15:00:00</thoiGianCham>
+        <ghiChu>Cần cải thiện phần tính toán</ghiChu>
+    </ketQua>
+    <ketQua>
+        <maThiSinh>TS003</maThiSinh>
+        <tenThiSinh>Lê Văn Cường</tenThiSinh>
+        <maKyThi>KT001</maKyThi>
+        <tenKyThi>Kỳ thi Toán học</tenKyThi>
+        <diem>0.0</diem>
+        <xepLoai>Chưa có kết quả</xepLoai>
+        <trangThai>CHUA_CHAM</trangThai>
+        <nguoiCham></nguoiCham>
+        <thoiGianBatDauThi>2024-12-15T08:00:00</thoiGianBatDauThi>
+        <thoiGianNopBai>2024-12-15T09:30:00</thoiGianNopBai>
+        <thoiGianCham></thoiGianCham>
+        <ghiChu>Đã nộp bài, chờ chấm</ghiChu>
     </ketQua>
 </ketQuaList>
 ```
+
+**📋 Các trạng thái bài thi:**
+- `CHUA_THI`: Thí sinh chưa bắt đầu làm bài
+- `DANG_THI`: Thí sinh đang trong thời gian làm bài  
+- `DA_NOP_BAI`: Thí sinh đã nộp bài xong
+- `CHUA_CHAM`: Bài đã nộp nhưng chưa được chấm
+- `DANG_CHAM`: Đang trong quá trình chấm bài
+- `DA_CHAM`: Đã chấm xong và có điểm
 
 ---
 
@@ -169,6 +203,28 @@ data/
 2. **KyThi ↔ GiamThi**: Mỗi kỳ thi có nhiều giám thị, mỗi giám thị có thể giám sát nhiều kỳ
 3. **ThiSinh ↔ KetQua**: Mỗi thí sinh có nhiều kết quả (từng kỳ thi)
 4. **KyThi ↔ KetQua**: Mỗi kỳ thi có nhiều kết quả (từng thí sinh)
+5. **User ↔ KetQua**: Người dùng (giám thị/giáo vụ/admin) có thể chấm bài và lưu thông tin
+
+## **🔐 Phân quyền nhập điểm:**
+
+### **👨‍💼 Admin (Quyền cao nhất)**
+- ✅ Xem tất cả kết quả
+- ✅ Nhập/sửa điểm cho tất cả bài thi
+- ✅ Quản lý trạng thái bài thi
+- ✅ Cập nhật điểm đã chấm bởi người khác
+
+### **👩‍🏫 Giáo vụ (Quyền quản lý học tập)**  
+- ✅ Xem tất cả kết quả
+- ✅ Nhập/sửa điểm cho tất cả bài thi
+- ✅ Bắt đầu/kết thúc quá trình chấm bài
+- ❌ Không được bắt đầu thi/nộp bài (chỉ giám thị mới làm được)
+
+### **👨‍🏫 Giám thị (Quyền giám sát thi)**
+- ✅ Bắt đầu thi cho thí sinh
+- ✅ Nộp bài cho thí sinh  
+- ✅ Chấm bài kỳ thi được phân công
+- ❌ Chỉ xem/chấm kỳ thi mình được phân công
+- ❌ Không được cập nhật điểm bài đã chấm bởi người khác
 
 ## **💡 Ưu điểm thiết kế:**
 

@@ -361,12 +361,25 @@ public class XMLDatabase {
                 ketQuaElement.appendChild(createElement(doc, "maKyThi", ketQua.getKyThi().getMaKyThi()));
                 ketQuaElement.appendChild(createElement(doc, "tenKyThi", ketQua.getKyThi().getTenKyThi()));
                 
-                // Lưu điểm số
+                // Lưu điểm số và xếp loại
                 ketQuaElement.appendChild(createElement(doc, "diem", String.valueOf(ketQua.getDiem())));
+                ketQuaElement.appendChild(createElement(doc, "xepLoai", ketQua.getXepLoai()));
                 
-                // Tính xếp loại dựa trên điểm
-                String xepLoai = tinhXepLoai(ketQua.getDiem());
-                ketQuaElement.appendChild(createElement(doc, "xepLoai", xepLoai));
+                // Lưu trạng thái bài thi
+                ketQuaElement.appendChild(createElement(doc, "trangThai", ketQua.getTrangThai().name()));
+                ketQuaElement.appendChild(createElement(doc, "nguoiCham", ketQua.getNguoiCham()));
+                ketQuaElement.appendChild(createElement(doc, "ghiChu", ketQua.getGhiChu()));
+                
+                // Lưu thời gian
+                if (ketQua.getThoiGianBatDauThi() != null) {
+                    ketQuaElement.appendChild(createElement(doc, "thoiGianBatDauThi", ketQua.getThoiGianBatDauThi().toString()));
+                }
+                if (ketQua.getThoiGianNopBai() != null) {
+                    ketQuaElement.appendChild(createElement(doc, "thoiGianNopBai", ketQua.getThoiGianNopBai().toString()));
+                }
+                if (ketQua.getThoiGianCham() != null) {
+                    ketQuaElement.appendChild(createElement(doc, "thoiGianCham", ketQua.getThoiGianCham().toString()));
+                }
                 
                 root.appendChild(ketQuaElement);
             }
@@ -410,6 +423,51 @@ public class XMLDatabase {
                     
                     if (thiSinh != null && kyThi != null) {
                         KetQua ketQua = new KetQua(thiSinh, kyThi, diem);
+                        
+                        // Load trạng thái bài thi
+                        String trangThaiStr = getElementValue(ketQuaElement, "trangThai");
+                        if (!trangThaiStr.isEmpty()) {
+                            try {
+                                KetQua.TrangThaiBaiThi trangThai = KetQua.TrangThaiBaiThi.valueOf(trangThaiStr);
+                                ketQua.setTrangThai(trangThai);
+                            } catch (IllegalArgumentException e) {
+                                // Nếu không parse được thì để mặc định
+                                System.err.println("Trạng thái không hợp lệ: " + trangThaiStr);
+                            }
+                        }
+                        
+                        // Load thông tin người chấm và ghi chú
+                        ketQua.setNguoiCham(getElementValue(ketQuaElement, "nguoiCham"));
+                        ketQua.setGhiChu(getElementValue(ketQuaElement, "ghiChu"));
+                        
+                        // Load thời gian
+                        String thoiGianBatDau = getElementValue(ketQuaElement, "thoiGianBatDauThi");
+                        if (!thoiGianBatDau.isEmpty()) {
+                            try {
+                                ketQua.setThoiGianBatDauThi(LocalDateTime.parse(thoiGianBatDau));
+                            } catch (Exception e) {
+                                System.err.println("Lỗi parse thời gian bắt đầu: " + e.getMessage());
+                            }  
+                        }
+                        
+                        String thoiGianNop = getElementValue(ketQuaElement, "thoiGianNopBai");
+                        if (!thoiGianNop.isEmpty()) {
+                            try {
+                                ketQua.setThoiGianNopBai(LocalDateTime.parse(thoiGianNop));
+                            } catch (Exception e) {
+                                System.err.println("Lỗi parse thời gian nộp bài: " + e.getMessage());
+                            }
+                        }
+                        
+                        String thoiGianChamStr = getElementValue(ketQuaElement, "thoiGianCham");
+                        if (!thoiGianChamStr.isEmpty()) {
+                            try {
+                                ketQua.setThoiGianCham(LocalDateTime.parse(thoiGianChamStr));
+                            } catch (Exception e) {
+                                System.err.println("Lỗi parse thời gian chấm: " + e.getMessage());
+                            }
+                        }
+                        
                         ketQuaList.add(ketQua);
                     }
                 }
@@ -447,6 +505,43 @@ public class XMLDatabase {
             }
         }
         return null;
+    }
+
+    // ============ PUBLIC ACCESSOR METHODS ============
+    
+    /**
+     * Lấy tất cả kỳ thi
+     */
+    public List<KyThi> getAllKyThi() {
+        return loadKyThi();
+    }
+    
+    /**
+     * Lấy tất cả thí sinh
+     */
+    public List<ThiSinh> getAllThiSinh() {
+        return loadThiSinh();
+    }
+    
+    /**
+     * Lấy tất cả giám thị
+     */
+    public List<GiamThi> getAllGiamThi() {
+        return loadGiamThi();
+    }
+    
+    /**
+     * Lấy tất cả kết quả
+     */
+    public List<KetQua> getAllKetQua() {
+        return loadKetQua();
+    }
+    
+    /**
+     * Lấy tất cả users
+     */
+    public List<User> getAllUsers() {
+        return loadUsers();
     }
 
     // ============ UTILITY METHODS ============

@@ -13,14 +13,29 @@ public class GiamThi {
     private String HoTen;
     private String DonVi;
     private String SDT;
+    private String email; // Thêm email để liên kết với User
+    private String username; // Thêm username để liên kết với User account
 
     public GiamThi(String maGiamThi, String HoTen, String DonVi, String SDT) {
         this.maGiamThi = maGiamThi;
         this.HoTen = HoTen;
         this.DonVi = DonVi;
         this.SDT = SDT;
+        this.email = "";
+        this.username = "";
     }
 
+    // Constructor với email và username
+    public GiamThi(String maGiamThi, String HoTen, String DonVi, String SDT, String email, String username) {
+        this.maGiamThi = maGiamThi;
+        this.HoTen = HoTen;
+        this.DonVi = DonVi;
+        this.SDT = SDT;
+        this.email = email;
+        this.username = username;
+    }
+
+    // Getters
     public String getMaGiamThi() {
         return maGiamThi;
     }
@@ -36,10 +51,47 @@ public class GiamThi {
     public String getSDT() {
         return SDT;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    // Setters
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setMaGiamThi(String maGiamThi) {
+        this.maGiamThi = maGiamThi;
+    }
+
+    public void setHoTen(String HoTen) {
+        this.HoTen = HoTen;
+    }
+
+    public void setDonVi(String DonVi) {
+        this.DonVi = DonVi;
+    }
+
+    public void setSDT(String SDT) {
+        this.SDT = SDT;
+    }
     
     public boolean phanCong(KyThi kythi){
         return kythi.themGiamThi(this);
     }
     
-    
+    @Override
+    public String toString() {
+        return String.format("GiamThi{maGiamThi='%s', HoTen='%s', DonVi='%s', email='%s'}", 
+                           maGiamThi, HoTen, DonVi, email);
+    }
 }
