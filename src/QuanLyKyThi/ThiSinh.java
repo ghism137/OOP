@@ -53,10 +53,32 @@ public class ThiSinh {
         return SDT;
     }
     
-    public void dangKythi(KyThi kythi){
+    public boolean dangKythi(KyThi kythi){
+        // Tạo phiếu đăng ký trước
         PhieuDangKy phieu = new PhieuDangKy(this, kythi, LocalDate.now());
-        kythi.themThiSinh(this);
-        System.out.println("Đã đăng ký kỳ thi: "+ kythi.getTenKyThi());
+        
+        // Hiển thị thông tin phí và xác nhận thanh toán
+        System.out.println("📋 Phiếu đăng ký: " + phieu.getMaPhieuDangKy());
+        System.out.println("💰 Phí đăng ký: " + phieu.tinhPhi() + "k VNĐ");
+        System.out.println("🏦 Vui lòng đóng phí để hoàn tất đăng ký...");
+        
+        // Giả lập xác nhận đóng phí (trong thực tế sẽ có giao diện thanh toán)
+        boolean xacNhanDongPhi = phieu.dongPhi(); // Tự động xác nhận đóng phí
+        
+        if (xacNhanDongPhi) {
+            // Chỉ khi đã đóng phí mới thêm vào kỳ thi
+            if (kythi.themThiSinh(this)) {
+                System.out.println("✅ Đăng ký thành công kỳ thi: " + kythi.getTenKyThi());
+                return true;
+            } else {
+                System.out.println("❌ Không thể đăng ký kỳ thi: " + kythi.getTenKyThi() + 
+                                 " (Đã đăng ký hoặc kỳ thi không còn nhận đăng ký)");
+                return false;
+            }
+        } else {
+            System.out.println("❌ Đăng ký thất bại: Chưa xác nhận đóng phí!");
+            return false;
+        }
     }
 
     public void xemketqua(KyThi kyThi){

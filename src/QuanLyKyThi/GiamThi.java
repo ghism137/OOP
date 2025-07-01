@@ -37,8 +37,8 @@ public class GiamThi {
         return SDT;
     }
     
-    public void phanCong(KyThi kythi){
-        kythi.themGiamThi(this);
+    public boolean phanCong(KyThi kythi){
+        return kythi.themGiamThi(this);
     }
     
     

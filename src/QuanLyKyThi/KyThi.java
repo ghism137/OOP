@@ -17,16 +17,18 @@ public class KyThi {
     private String tenKyThi;
     private LocalDate ngayToChuc;
     private String tinhTrang;
+    private double phiDangKy; // Thêm phí đăng ký riêng cho từng kỳ thi
     
     private List<ThiSinh> danhSachThiSinh;
     private List<GiamThi> danhSachGiamThi;
     private List<KetQua> danhSachKetQua;
 
-    public KyThi(String maKyThi, String tenKythi, LocalDate ngayToChuc, String tinhTrang, List<ThiSinh> danhSachThiSinh, List<GiamThi> danhSachGiamThi) {
+    public KyThi(String maKyThi, String tenKythi, LocalDate ngayToChuc, String tinhTrang, List<ThiSinh> danhSachThiSinh, List<GiamThi> danhSachGiamThi, double phiDangKy) {
         this.maKyThi = maKyThi;
         this.tenKyThi = tenKythi;
         this.ngayToChuc = ngayToChuc;
         this.tinhTrang = tinhTrang;
+        this.phiDangKy = phiDangKy;
         this.danhSachThiSinh = danhSachThiSinh;
         this.danhSachGiamThi = danhSachGiamThi;
         this.danhSachKetQua = new ArrayList<>();
@@ -34,12 +36,34 @@ public class KyThi {
     
     // Phương thức để thêm thí sinh và giám thị vào danh sách
     
-    public void themThiSinh(ThiSinh thisinh){
+    // Phương thức để thêm thí sinh với kiểm tra trùng lặp
+    public boolean themThiSinh(ThiSinh thisinh){
+        // Kiểm tra thí sinh đã đăng ký chưa
+        for (ThiSinh ts : danhSachThiSinh) {
+            if (ts.getMaThisinh().equals(thisinh.getMaThisinh())) {
+                return false; // Đã tồn tại
+            }
+        }
+        
+        // Kiểm tra trạng thái kỳ thi - chỉ cho phép đăng ký khi "Sắp diễn ra"
+        if (!"Sắp diễn ra".equals(tinhTrang)) {
+            return false; // Không thể đăng ký nếu không phải "Sắp diễn ra"
+        }
+        
         danhSachThiSinh.add(thisinh);
+        return true; // Đăng ký thành công
     }
     
-    public void themGiamThi(GiamThi giamthi){
+    public boolean themGiamThi(GiamThi giamthi){
+        // Kiểm tra giám thị đã được phân công chưa
+        for (GiamThi gt : danhSachGiamThi) {
+            if (gt.getMaGiamThi().equals(giamthi.getMaGiamThi())) {
+                return false; // Đã tồn tại
+            }
+        }
+        
         danhSachGiamThi.add(giamthi);
+        return true;
     }
     
     // Getter methods
@@ -80,6 +104,14 @@ public class KyThi {
     
     public String getTinhTrang() {
         return tinhTrang;
+    }
+    
+    public double getPhiDangKy() {
+        return phiDangKy;
+    }
+    
+    public void setPhiDangKy(double phiDangKy) {
+        this.phiDangKy = phiDangKy;
     }
     
     public void tinhKetQua(){

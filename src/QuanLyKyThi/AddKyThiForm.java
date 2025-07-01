@@ -2,8 +2,6 @@ package QuanLyKyThi;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -16,7 +14,7 @@ import java.util.List;
 public class AddKyThiForm extends JInternalFrame {
     
     private List<KyThi> danhSachKyThi;
-    private JTextField txtMaKyThi, txtTenKyThi, txtNgayToChuc;
+    private JTextField txtMaKyThi, txtTenKyThi, txtNgayToChuc, txtPhiDangKy;
     private JComboBox<String> cbTinhTrang;
     private JButton btnSave, btnCancel, btnClear;
     
@@ -26,7 +24,7 @@ public class AddKyThiForm extends JInternalFrame {
     }
     
     private void initComponents() {
-        setSize(500, 400);
+        setSize(400, 400);
         setLayout(new BorderLayout());
         
         // Panel chính
@@ -85,6 +83,14 @@ public class AddKyThiForm extends JInternalFrame {
         String[] tinhTrangOptions = {"Sắp diễn ra", "Đang diễn ra", "Đã kết thúc", "Đã hủy"};
         cbTinhTrang = new JComboBox<>(tinhTrangOptions);
         mainPanel.add(cbTinhTrang, gbc);
+        
+        // Phí đăng ký
+        gbc.gridx = 0; gbc.gridy = 6;
+        mainPanel.add(new JLabel("Phí Đăng Ký (k VNĐ):"), gbc);
+        gbc.gridx = 1;
+        txtPhiDangKy = new JTextField(15);
+        txtPhiDangKy.setText("150"); // Mặc định 150k
+        mainPanel.add(txtPhiDangKy, gbc);
         
         add(mainPanel, BorderLayout.CENTER);
         
@@ -152,22 +158,26 @@ public class AddKyThiForm extends JInternalFrame {
             String tenKyThi = txtTenKyThi.getText().trim();
             String ngayText = txtNgayToChuc.getText().trim();
             String tinhTrang = (String) cbTinhTrang.getSelectedItem();
+            String phiText = txtPhiDangKy.getText().trim();
             
             // Parse ngày
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             LocalDate ngayToChuc = LocalDate.parse(ngayText, formatter);
             
+            // Parse phí đăng ký
+            double phiDangKy = Double.parseDouble(phiText);
+            
             // Tạo kỳ thi mới
             KyThi kyThi = new KyThi(maKyThi, tenKyThi, ngayToChuc, tinhTrang, 
-                                   new ArrayList<>(), new ArrayList<>());
+                                   new ArrayList<>(), new ArrayList<>(), phiDangKy);
             
             // Thêm vào danh sách
             danhSachKyThi.add(kyThi);
             
             // Thông báo thành công
             JOptionPane.showMessageDialog(this, 
-                "Đã thêm kỳ thi thành công!\\n" +
-                "Mã kỳ thi: " + maKyThi + "\\n" +
+                "Đã thêm kỳ thi thành công!\n" +
+                "Mã kỳ thi: " + maKyThi + "\n" +
                 "Tên kỳ thi: " + tenKyThi,
                 "Thành công", JOptionPane.INFORMATION_MESSAGE);
             
@@ -177,7 +187,7 @@ public class AddKyThiForm extends JInternalFrame {
             
         } catch (DateTimeParseException e) {
             JOptionPane.showMessageDialog(this, 
-                "Định dạng ngày không hợp lệ!\\nVui lòng nhập theo định dạng dd/MM/yyyy",
+                "Định dạng ngày không hợp lệ!\nVui lòng nhập theo định dạng dd/MM/yyyy",
                 "Lỗi", JOptionPane.ERROR_MESSAGE);
             txtNgayToChuc.requestFocus();
         } catch (Exception e) {
@@ -204,7 +214,28 @@ public class AddKyThiForm extends JInternalFrame {
             return false;
         }
         
-        // Kiểm tra trùng mã kỳ thi
+        // Kiểm tra phí đăng ký
+        if (txtPhiDangKy.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập phí đăng ký!", 
+                                        "Thông báo", JOptionPane.WARNING_MESSAGE);
+            txtPhiDangKy.requestFocus();
+            return false;
+        }
+        
+        try {
+            double phi = Double.parseDouble(txtPhiDangKy.getText().trim());
+            if (phi < 0) {
+                JOptionPane.showMessageDialog(this, "Phí đăng ký không thể âm!", 
+                                            "Thông báo", JOptionPane.WARNING_MESSAGE);
+                txtPhiDangKy.requestFocus();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Phí đăng ký phải là số!", 
+                                        "Thông báo", JOptionPane.WARNING_MESSAGE);
+            txtPhiDangKy.requestFocus();
+            return false;
+        }
         String maKyThi = txtMaKyThi.getText().trim();
         for (KyThi kt : danhSachKyThi) {
             if (kt.getMaKyThi().equals(maKyThi)) {
@@ -220,6 +251,7 @@ public class AddKyThiForm extends JInternalFrame {
     private void clearForm() {
         txtTenKyThi.setText("");
         txtNgayToChuc.setText("");
+        txtPhiDangKy.setText("150");
         cbTinhTrang.setSelectedIndex(0);
         txtTenKyThi.requestFocus();
     }
