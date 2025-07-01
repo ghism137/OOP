@@ -85,7 +85,7 @@ public class GiamThi {
         this.SDT = SDT;
     }
     
-    public boolean phanCong(KyThi kythi){
+    public boolean phanCong(KyThi kythi) throws KyThiValidationException, DuplicateException {
         return kythi.themGiamThi(this);
     }
     

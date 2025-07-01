@@ -2,8 +2,6 @@ package QuanLyKyThi;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -190,7 +188,6 @@ public class MainGUIWithAuth extends JFrame {
     
     private void updateUIForUserRole() {
         // Cập nhật giao diện theo quyền của user
-        boolean isAdmin = authService.isAdmin();
         boolean isGiaoVu = authService.isGiaoVu();
         
         // Chỉ admin và giáo vụ mới được thêm/sửa kỳ thi

@@ -329,14 +329,13 @@ public class LoginForm extends JFrame {
      */
     private void openDemoMode() {
         try {
-            // Gọi Demo.main() hoặc tạo Demo instance
+            // Mở MainGUI với quyền demo
             SwingUtilities.invokeLater(() -> {
                 try {
-                    // Option 1: Gọi main của Demo
-                    demo.Demo.main(new String[]{});
-                } catch (Exception ex) {
-                    // Option 2: Basic MainGUI nếu Demo không hoạt động
+                    // Tạo MainGUI với quyền basic
                     new MainGUI();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Không thể mở chế độ demo: " + ex.getMessage());
                 }
             });
         } catch (Exception e) {

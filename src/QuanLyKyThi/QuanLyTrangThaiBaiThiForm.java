@@ -3,8 +3,6 @@ package QuanLyKyThi;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -232,12 +230,15 @@ public class QuanLyTrangThaiBaiThiForm extends JFrame {
             return;
         }
         
-        if (ketQua.batDauThi()) {
+        try {
+            ketQua.batDauThi();
             JOptionPane.showMessageDialog(this, "Bắt đầu thi thành công!");
             xmlDatabase.saveKetQua(xmlDatabase.getAllKetQua());
             loadKetQuaByKyThi();
-        } else {
-            JOptionPane.showMessageDialog(this, "Không thể bắt đầu thi. Kiểm tra trạng thái bài thi!");
+        } catch (StateTransitionException e) {
+            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi không xác định: " + e.getMessage());
         }
     }
     
@@ -248,12 +249,13 @@ public class QuanLyTrangThaiBaiThiForm extends JFrame {
             return;
         }
         
-        if (ketQua.nopBai()) {
+        try {
+            ketQua.nopBai();
             JOptionPane.showMessageDialog(this, "Nộp bài thành công!");
             xmlDatabase.saveKetQua(xmlDatabase.getAllKetQua());
             loadKetQuaByKyThi();
-        } else {
-            JOptionPane.showMessageDialog(this, "Không thể nộp bài. Kiểm tra trạng thái bài thi!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Không thể nộp bài: " + e.getMessage());
         }
     }
     
@@ -264,12 +266,13 @@ public class QuanLyTrangThaiBaiThiForm extends JFrame {
             return;
         }
         
-        if (ketQua.batDauCham(currentUser.getUsername(), currentUser.getRole())) {
+        try {
+            ketQua.batDauCham(currentUser.getUsername(), currentUser.getRole());
             JOptionPane.showMessageDialog(this, "Bắt đầu chấm bài thành công!");
             xmlDatabase.saveKetQua(xmlDatabase.getAllKetQua());
             loadKetQuaByKyThi();
-        } else {
-            JOptionPane.showMessageDialog(this, "Không thể bắt đầu chấm bài. Kiểm tra quyền và trạng thái!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Không thể bắt đầu chấm bài: " + e.getMessage());
         }
     }
     
@@ -284,17 +287,16 @@ public class QuanLyTrangThaiBaiThiForm extends JFrame {
             double diem = Double.parseDouble(txtDiem.getText().trim());
             String ghiChu = txtGhiChu.getText().trim();
             
-            if (ketQua.nhapDiem(diem, currentUser.getUsername(), currentUser.getRole(), ghiChu)) {
-                JOptionPane.showMessageDialog(this, "Nhập điểm thành công!");
-                xmlDatabase.saveKetQua(xmlDatabase.getAllKetQua());
-                loadKetQuaByKyThi();
-                txtDiem.setText("");
-                txtGhiChu.setText("");
-            } else {
-                JOptionPane.showMessageDialog(this, "Không thể nhập điểm. Kiểm tra quyền và trạng thái!");
-            }
+            ketQua.nhapDiem(diem, currentUser.getUsername(), currentUser.getRole(), ghiChu);
+            JOptionPane.showMessageDialog(this, "Nhập điểm thành công!");
+            xmlDatabase.saveKetQua(xmlDatabase.getAllKetQua());
+            loadKetQuaByKyThi();
+            txtDiem.setText("");
+            txtGhiChu.setText("");
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Điểm phải là số từ 0 đến 10!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Không thể nhập điểm: " + e.getMessage());
         }
     }
     
@@ -309,17 +311,16 @@ public class QuanLyTrangThaiBaiThiForm extends JFrame {
             double diem = Double.parseDouble(txtDiem.getText().trim());
             String ghiChu = txtGhiChu.getText().trim();
             
-            if (ketQua.capNhatDiem(diem, currentUser.getUsername(), currentUser.getRole(), ghiChu)) {
-                JOptionPane.showMessageDialog(this, "Cập nhật điểm thành công!");
-                xmlDatabase.saveKetQua(xmlDatabase.getAllKetQua());
-                loadKetQuaByKyThi();
-                txtDiem.setText("");
-                txtGhiChu.setText("");
-            } else {
-                JOptionPane.showMessageDialog(this, "Không thể cập nhật điểm. Chỉ Admin hoặc người chấm mới được cập nhật!");
-            }
+            ketQua.capNhatDiem(diem, currentUser.getUsername(), currentUser.getRole(), ghiChu);
+            JOptionPane.showMessageDialog(this, "Cập nhật điểm thành công!");
+            xmlDatabase.saveKetQua(xmlDatabase.getAllKetQua());
+            loadKetQuaByKyThi();
+            txtDiem.setText("");
+            txtGhiChu.setText("");
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Điểm phải là số từ 0 đến 10!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Không thể cập nhật điểm: " + e.getMessage());
         }
     }
     

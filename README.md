@@ -38,7 +38,7 @@ src/
 │   │   ├── QuanLyTrangThaiBaiThiForm.java  # Form quản lý trạng thái bài thi
 │   │   └── StubForms.java          # Các form phụ (stub)
 │   └── demo/
-│       └── Demo.java               # File demo
+│       └── (empty - các file demo test đã được xóa)
 └── data/                           # Thư mục chứa file XML (tự tạo)
     ├── users.xml                   # Dữ liệu tài khoản
     ├── kythi.xml                   # Dữ liệu kỳ thi
@@ -269,19 +269,14 @@ boolean daTonTai = kyThi.kiemTraTrung("GT001", "GIAMTHI");
 ## 🚀 Cách sử dụng
 
 ### Entry Points (Điểm khởi chạy):
-Dự án có **3 điểm khởi chạy** khác nhau:
+Dự án có **2 điểm khởi chạy** chính:
 
-1. **`Demo.main()`** - Entry point chính không có authentication
-   ```bash
-   java -cp src demo.Demo
-   ```
-
-2. **`LoginForm.main()`** - **⭐ KHUYẾN NGHỊ** - Entry point có authentication và phân quyền
+1. **`LoginForm.main()`** - **⭐ KHUYẾN NGHỊ** - Entry point có authentication và phân quyền
    ```bash
    java -cp src QuanLyKyThi.LoginForm
    ```
 
-3. **`MainGUI.main()`** - Entry point trực tiếp vào giao diện chính (bypass login)
+2. **`MainGUI.main()`** - Entry point trực tiếp vào giao diện chính (bypass login)
    ```bash
    java -cp src QuanLyKyThi.MainGUI
    ```
@@ -295,7 +290,6 @@ Khi sử dụng `LoginForm.main()`, hệ thống sẽ tự động chuyển hư�
 | **Giáo vụ** | `giaovu/gv123` | `MainGUIWithAuth` | Quản lý kỳ thi, nhập điểm, thống kê |
 | **User** | `user1/user123` | `MainGUI` | Xem thông tin, đăng ký thi |
 | **Thí sinh** | `thisinh1/ts123` | `MainGUI` | Chỉ xem kết quả của mình |
-| **Khác** | - | `Demo` | Fallback mode |
 
 **💡 Tài khoản mẫu khác:**
 - `giaovu2/gv456`, `user2/user456`, `thisinh2/ts456`
@@ -385,17 +379,17 @@ QuanLyKyThi_1/
 - **User**: `user1/user123` - Xem thông tin, đăng ký thi
 
 ### Phân quyền:
-| Chức năng | Admin | Giáo vụ | Giám thị | User |
-|-----------|-------|---------|----------|------|
-| Quản lý tài khoản | ✅ | ❌ | ❌ | ❌ |
-| Thêm/sửa kỳ thi | ✅ | ✅ | ❌ | ❌ |
-| Quản lý giám thị | ✅ | ✅ | ❌ | ❌ |
-| Bắt đầu thi | ✅ | ❌ | ✅ | ❌ |
-| Nộp bài thi | ✅ | ❌ | ✅ | ❌ |
-| Bắt đầu chấm bài | ✅ | ✅ | ✅* | ❌ |
-| Nhập điểm | ✅ | ✅ | ✅* | ❌ |
-| Cập nhật điểm | ✅ | ✅ | ❌** | ❌ |
-| Xem kỳ thi | ✅ | ✅ | ✅ | ✅ |
+| Chức năng         | Admin | Giáo vụ | Giám thị | User |
+|-------------------|------ |---------|----------|------|
+| Quản lý tài khoản |  ✅  |    ❌   |    ❌   |  ❌  |
+| Thêm/sửa kỳ thi   |  ✅  |    ✅   |    ❌   |  ❌  |
+| Quản lý giám thị  |  ✅  |    ✅   |    ❌   |  ❌  | 
+| Bắt đầu thi       |  ✅  |    ❌   |    ✅   |  ❌  |
+| Nộp bài thi       |  ✅  |    ❌   |    ✅   |  ❌  |
+| Bắt đầu chấm bài  |  ✅  |    ✅   |    ✅*  |  ❌  |
+| Nhập điểm         |  ✅  |    ✅   |    ✅*  |  ❌  |
+| Cập nhật điểm     |  ✅  |    ✅   |    ❌** |  ❌  |
+| Xem kỳ thi        |  ✅  |    ✅   |    ✅   |  ✅  |
 
 **Ghi chú:**
 - ✅* : Giám thị chỉ được chấm/nhập điểm cho kỳ thi được phân công
@@ -410,14 +404,14 @@ CHƯA THI → ĐANG THI → ĐÃ NỘP BÀI → CHƯA CHẤM → ĐANG CHẤM �
 
 ### Chi tiết các trạng thái:
 
-| Trạng thái | Mô tả | Thao tác được phép |
-|------------|-------|-------------------|
-| **CHƯA THI** | Thí sinh chưa bắt đầu làm bài | Bắt đầu thi |
-| **ĐANG THI** | Thí sinh đang làm bài thi | Nộp bài |
-| **ĐÃ NỘP BÀI** | Thí sinh đã nộp bài | Tự động chuyển sang "Chưa chấm" |
-| **CHƯA CHẤM** | Bài thi chờ được chấm | Bắt đầu chấm |
-| **ĐANG CHẤM** | Bài thi đang được chấm | Nhập điểm |
-| **ĐÃ CHẤM** | Bài thi đã hoàn thành chấm | Xem kết quả, Cập nhật điểm |
+| Trạng thái     |              Mô tả            |       Thao tác được phép        |
+|----------------|-------------------------------|---------------------------------|
+| **CHƯA THI**   | Thí sinh chưa bắt đầu làm bài | Bắt đầu thi                     |
+| **ĐANG THI**   | Thí sinh đang làm bài thi     | Nộp bài                         |
+| **ĐÃ NỘP BÀI** | Thí sinh đã nộp bài           | Tự động chuyển sang "Chưa chấm" |
+| **CHƯA CHẤM**  | Bài thi chờ được chấm         | Bắt đầu chấm                    |
+| **ĐANG CHẤM**  | Bài thi đang được chấm        | Nhập điểm                       |
+| **ĐÃ CHẤM**    | Bài thi đã hoàn thành chấm    | Xem kết quả, Cập nhật điểm      |
 
 ### Quyền thao tác theo role:
 
