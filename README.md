@@ -222,7 +222,43 @@ Hệ thống được thiết kế theo mô hình **MVC (Model-View-Controller)*
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-### 💡 **Design Patterns được sử dụng:**
+### 🔍 **Method quan trọng: `kiemTraTrung()`**
+
+Method `kiemTraTrung()` trong class `KyThi` là một method quan trọng đảm bảo tính toàn vẹn dữ liệu:
+
+```java
+public boolean kiemTraTrung(String ma, String loai)
+```
+
+**🎯 Mục đích**: 
+- Kiểm tra trùng lặp mã thí sinh hoặc mã giám thị trong kỳ thi
+- Đảm bảo tính duy nhất và tránh duplicate data
+
+**📝 Tham số**:
+- `ma`: Mã cần kiểm tra (mã thí sinh hoặc mã giám thị)  
+- `loai`: "THISINH" hoặc "GIAMTHI"
+
+**📤 Trả về**: 
+- `true` nếu mã đã tồn tại (trùng lặp)
+- `false` nếu mã chưa tồn tại (an toàn để thêm)
+
+**🔧 Cách sử dụng**:
+```java
+// Kiểm tra thí sinh
+boolean daTonTai = kyThi.kiemTraTrung("TS001", "THISINH");
+
+// Kiểm tra giám thị  
+boolean daTonTai = kyThi.kiemTraTrung("GT001", "GIAMTHI");
+```
+
+**💡 Ý nghĩa trong UML**:
+- Method này được gọi bên trong `themThiSinh()` và `themGiamThi()`
+- Đảm bảo business rules: "Mỗi thí sinh/giám thị chỉ được đăng ký 1 lần cho 1 kỳ thi"
+- Hỗ trợ data validation và user experience tốt hơn
+
+---
+
+### 🎨 **Design Patterns được sử dụng:**
 - **MVC Pattern**: Tách biệt GUI, Logic, Data
 - **State Pattern**: Quản lý trạng thái bài thi với 6 states
 - **Factory Pattern**: Tạo objects XML và Forms
@@ -471,6 +507,21 @@ KyThi (1) ←→ (N) KetQua     // Một kỳ thi có nhiều kết quả
   </ketQua>
 </ketQuaList>
 ```
+
+#### 3. `users.xml` - Tài khoản người dùng:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<userList>
+  <user>
+    <username>admin</username>
+    <password>admin123</password>
+    <role>ADMIN</role>
+    <email>admin@quanlykythi.com</email>
+  </user>
+</userList>
+```
+
+#### 4. `giamthi.xml` - Giám thị:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <giamThiList>

@@ -38,11 +38,9 @@ public class KyThi {
     
     // Phương thức để thêm thí sinh với kiểm tra trùng lặp
     public boolean themThiSinh(ThiSinh thisinh){
-        // Kiểm tra thí sinh đã đăng ký chưa
-        for (ThiSinh ts : danhSachThiSinh) {
-            if (ts.getMaThisinh().equals(thisinh.getMaThisinh())) {
-                return false; // Đã tồn tại
-            }
+        // Kiểm tra thí sinh đã đăng ký chưa sử dụng method kiemTraTrung()
+        if (kiemTraTrung(thisinh.getMaThisinh(), "THISINH")) {
+            return false; // Đã tồn tại
         }
         
         // Kiểm tra trạng thái kỳ thi - chỉ cho phép đăng ký khi "Sắp diễn ra"
@@ -55,11 +53,9 @@ public class KyThi {
     }
     
     public boolean themGiamThi(GiamThi giamthi){
-        // Kiểm tra giám thị đã được phân công chưa
-        for (GiamThi gt : danhSachGiamThi) {
-            if (gt.getMaGiamThi().equals(giamthi.getMaGiamThi())) {
-                return false; // Đã tồn tại
-            }
+        // Kiểm tra giám thị đã được phân công chưa sử dụng method kiemTraTrung()
+        if (kiemTraTrung(giamthi.getMaGiamThi(), "GIAMTHI")) {
+            return false; // Đã tồn tại
         }
         
         danhSachGiamThi.add(giamthi);
@@ -130,5 +126,30 @@ public class KyThi {
                 System.out.println("Tìm thấy: " + ts.getHoTen());
             }
         }
+    }
+    
+    /**
+     * Kiểm tra trùng lặp thí sinh hoặc giám thị trong kỳ thi
+     * @param ma - Mã thí sinh hoặc mã giám thị cần kiểm tra
+     * @param loai - "THISINH" hoặc "GIAMTHI"
+     * @return true nếu trùng lặp, false nếu không trùng
+     */
+    public boolean kiemTraTrung(String ma, String loai) {
+        if ("THISINH".equals(loai)) {
+            // Kiểm tra trùng lặp thí sinh
+            for (ThiSinh ts : danhSachThiSinh) {
+                if (ts.getMaThisinh().equals(ma)) {
+                    return true; // Trùng lặp
+                }
+            }
+        } else if ("GIAMTHI".equals(loai)) {
+            // Kiểm tra trùng lặp giám thị
+            for (GiamThi gt : danhSachGiamThi) {
+                if (gt.getMaGiamThi().equals(ma)) {
+                    return true; // Trùng lặp
+                }
+            }
+        }
+        return false; // Không trùng lặp
     }
 }
