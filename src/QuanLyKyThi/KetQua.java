@@ -117,75 +117,104 @@ public class KetQua {
     /**
      * Bắt đầu làm bài thi
      */
-    public boolean batDauThi() {
-        if (trangThai == TrangThaiBaiThi.CHUA_THI) {
-            this.trangThai = TrangThaiBaiThi.DANG_THI;
-            this.thoiGianBatDauThi = LocalDateTime.now();
-            return true;
+    public void batDauThi() throws StateTransitionException {
+        if (trangThai != TrangThaiBaiThi.CHUA_THI) {
+            throw new StateTransitionException("Không thể bắt đầu thi từ trạng thái: " + trangThai + ". Chỉ có thể bắt đầu từ trạng thái CHƯA_THI");
         }
-        return false;
+        
+        this.trangThai = TrangThaiBaiThi.DANG_THI;
+        this.thoiGianBatDauThi = LocalDateTime.now();
     }
     
     /**
      * Nộp bài thi
      */
-    public boolean nopBai() {
-        if (trangThai == TrangThaiBaiThi.DANG_THI) {
-            this.trangThai = TrangThaiBaiThi.DA_NOP_BAI;
-            this.thoiGianNopBai = LocalDateTime.now();
-            // Tự động chuyển sang trạng thái chưa chấm
-            this.trangThai = TrangThaiBaiThi.CHUA_CHAM;
-            return true;
+    public void nopBai() throws StateTransitionException {
+        if (trangThai != TrangThaiBaiThi.DANG_THI) {
+            throw new StateTransitionException("Không thể nộp bài từ trạng thái: " + trangThai + ". Chỉ có thể nộp khi đang thi");
         }
-        return false;
+        
+        this.trangThai = TrangThaiBaiThi.DA_NOP_BAI;
+        this.thoiGianNopBai = LocalDateTime.now();
+        // Tự động chuyển sang trạng thái chưa chấm
+        this.trangThai = TrangThaiBaiThi.CHUA_CHAM;
     }
     
     /**
      * Bắt đầu chấm bài (chỉ Admin, Giáo vụ, Giám thị được phân công)
      */
-    public boolean batDauCham(String nguoiChamUsername, String roleNguoiCham) {
-        if (trangThai == TrangThaiBaiThi.CHUA_CHAM && 
-            kiemTraQuyenCham(roleNguoiCham, nguoiChamUsername)) {
-            this.trangThai = TrangThaiBaiThi.DANG_CHAM;
-            this.nguoiCham = nguoiChamUsername;
-            return true;
+    public void batDauCham(String nguoiChamUsername, String roleNguoiCham) throws StateTransitionException, PermissionException {
+        if (trangThai != TrangThaiBaiThi.CHUA_CHAM) {
+            throw new StateTransitionException("Không thể bắt đầu chấm từ trạng thái: " + trangThai + ". Chỉ có thể chấm khi ở trạng thái CHƯA_CHẤM");
         }
-        return false;
+        
+        if (nguoiChamUsername == null || nguoiChamUsername.trim().isEmpty()) {
+            throw new PermissionException("Username người chấm không được để trống");
+        }
+        
+        if (!kiemTraQuyenCham(roleNguoiCham, nguoiChamUsername)) {
+            throw new PermissionException("User " + nguoiChamUsername + " với role " + roleNguoiCham + " không có quyền chấm bài thi này");
+        }
+        
+        this.trangThai = TrangThaiBaiThi.DANG_CHAM;
+        this.nguoiCham = nguoiChamUsername;
+        this.thoiGianCham = LocalDateTime.now();
     }
     
     /**
      * Nhập điểm và hoàn thành chấm bài
      */
-    public boolean nhapDiem(double diem, String nguoiChamUsername, String roleNguoiCham, String ghiChu) {
-        if (trangThai == TrangThaiBaiThi.DANG_CHAM && 
-            nguoiCham.equals(nguoiChamUsername) &&
-            kiemTraQuyenCham(roleNguoiCham, nguoiChamUsername)) {
-            
-            if (diem >= 0 && diem <= 10) {
-                this.diem = diem;
-                this.trangThai = TrangThaiBaiThi.DA_CHAM;
-                this.thoiGianCham = LocalDateTime.now();
-                this.ghiChu = ghiChu != null ? ghiChu : "";
-                return true;
-            }
+    public void nhapDiem(double diem, String nguoiChamUsername, String roleNguoiCham, String ghiChu) 
+            throws StateTransitionException, PermissionException, QuanLyKyThiException {
+        
+        if (trangThai != TrangThaiBaiThi.DANG_CHAM) {
+            throw new StateTransitionException("Không thể nhập điểm từ trạng thái: " + trangThai + ". Chỉ có thể nhập điểm khi đang chấm");
         }
-        return false;
+        
+        if (nguoiCham == null || !nguoiCham.equals(nguoiChamUsername)) {
+            throw new PermissionException("Chỉ người đã bắt đầu chấm (" + nguoiCham + ") mới có thể nhập điểm");
+        }
+        
+        if (!kiemTraQuyenCham(roleNguoiCham, nguoiChamUsername)) {
+            throw new PermissionException("User " + nguoiChamUsername + " không có quyền nhập điểm");
+        }
+        
+        if (diem < 0 || diem > 10) {
+            throw new QuanLyKyThiException("Điểm phải trong khoảng 0-10 (điểm nhập: " + diem + ")");
+        }
+        
+        this.diem = diem;
+        this.trangThai = TrangThaiBaiThi.DA_CHAM;
+        this.thoiGianCham = LocalDateTime.now();
+        this.ghiChu = ghiChu != null ? ghiChu : "";
     }
     
     /**
-     * Cập nhật điểm (chỉ người đã chấm hoặc Admin)
+     * Cập nhật điểm (chỉ người đã chấm hoặc Admin/Giáo vụ)
      */
-    public boolean capNhatDiem(double diem, String nguoiCapNhatUsername, String roleNguoiCapNhat, String ghiChu) {
-        if (trangThai == TrangThaiBaiThi.DA_CHAM && 
-            (nguoiCham.equals(nguoiCapNhatUsername) || "admin".equals(roleNguoiCapNhat)) &&
-            diem >= 0 && diem <= 10) {
-            
-            this.diem = diem;
-            this.thoiGianCham = LocalDateTime.now();
-            this.ghiChu = ghiChu != null ? ghiChu : "";
-            return true;
+    public void capNhatDiem(double diem, String nguoiCapNhatUsername, String roleNguoiCapNhat, String ghiChu) 
+            throws StateTransitionException, PermissionException, QuanLyKyThiException {
+        
+        if (trangThai != TrangThaiBaiThi.DA_CHAM) {
+            throw new StateTransitionException("Chỉ có thể cập nhật điểm khi đã chấm xong");
         }
-        return false;
+        
+        // Chỉ Admin, Giáo vụ hoặc người đã chấm mới được cập nhật điểm
+        boolean coQuyen = "admin".equals(roleNguoiCapNhat) || 
+                         "giaovu".equals(roleNguoiCapNhat) ||
+                         (nguoiCham != null && nguoiCham.equals(nguoiCapNhatUsername));
+        
+        if (!coQuyen) {
+            throw new PermissionException("Chỉ Admin, Giáo vụ hoặc người đã chấm mới có thể cập nhật điểm");
+        }
+        
+        if (diem < 0 || diem > 10) {
+            throw new QuanLyKyThiException("Điểm phải trong khoảng 0-10 (điểm cập nhật: " + diem + ")");
+        }
+            
+        this.diem = diem;
+        this.thoiGianCham = LocalDateTime.now();
+        this.ghiChu = ghiChu != null ? ghiChu : "";
     }
     
     /**

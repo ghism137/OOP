@@ -24,15 +24,23 @@ public class PhieuDangKy {
     }
     
     // Phương thức xác nhận đóng phí
-    public boolean dongPhi() {
-        if (!daDongPhi) {
-            this.daDongPhi = true;
-            System.out.println("✅ Đã xác nhận đóng phí: " + tinhPhi() + "k VNĐ cho phiếu " + maPhieuDangKy);
-            return true;
-        } else {
-            System.out.println("⚠️ Phiếu " + maPhieuDangKy + " đã được đóng phí trước đó!");
-            return false;
+    public boolean dongPhi() throws PaymentException {
+        if (daDongPhi) {
+            throw new PaymentException("Phiếu " + maPhieuDangKy + " đã được đóng phí trước đó");
         }
+        
+        if (kyThi == null) {
+            throw new PaymentException("Kỳ thi không hợp lệ");
+        }
+        
+        double phiCanDong = tinhPhi();
+        if (phiCanDong <= 0) {
+            throw new PaymentException("Phí đăng ký không hợp lệ: " + phiCanDong);
+        }
+        
+        this.daDongPhi = true;
+        System.out.println("✅ Đã xác nhận đóng phí: " + phiCanDong + " VNĐ cho phiếu " + maPhieuDangKy);
+        return true;
     }
     
     // Getter methods
@@ -41,4 +49,28 @@ public class PhieuDangKy {
     public KyThi getKyThi() { return kyThi; }
     public LocalDate getNgayDangKy() { return ngayDangKy; }
     public boolean isDaDongPhi() { return daDongPhi; }
+    
+    /**
+     * Xác nhận thanh toán phí đăng ký (alias cho dongPhi())
+     * @return true nếu thanh toán thành công
+     * @throws PaymentException nếu có lỗi thanh toán
+     */
+    public boolean xacNhanTT() throws PaymentException {
+        return dongPhi();
+    }
+    
+    /**
+     * Tạo phiếu đăng ký mới cho thí sinh và kỳ thi
+     * @param thiSinh - Thí sinh đăng ký
+     * @param kyThi - Kỳ thi được đăng ký
+     * @return PhieuDangKy mới được tạo
+     */
+    public static PhieuDangKy taoPhieu(ThiSinh thiSinh, KyThi kyThi) {
+        LocalDate ngayDangKy = LocalDate.now();
+        PhieuDangKy phieu = new PhieuDangKy(thiSinh, kyThi, ngayDangKy);
+        System.out.println("📋 Đã tạo phiếu đăng ký: " + phieu.getMaPhieuDangKy() + 
+                          " cho thí sinh " + thiSinh.getHoTen() + 
+                          " kỳ thi " + kyThi.getTenKyThi());
+        return phieu;
+    }
 }

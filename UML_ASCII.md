@@ -191,26 +191,41 @@
     - `loai`: "THISINH" hoặc "GIAMTHI"
   - **Trả về**: `true` nếu trùng lặp, `false` nếu không trùng
   - **Ý nghĩa**: Đảm bảo tính duy nhất của thí sinh/giám thị trong mỗi kỳ thi
+- **`+themKetQua(KetQua)`**: Thêm kết quả thi vào danh sách
+- **`+nhapDiem(ThiSinh, double)`**: Nhập điểm cho thí sinh (tạo KetQua mới)
+- **`+tinhKetQua()`**: Tổng hợp và tính toán kết quả kỳ thi
+- **`+thongke()`**: Thống kê số lượng thí sinh, giám thị
+- **`+timKiem(String)`**: Tìm kiếm thí sinh theo tên
 
 ### Class ThiSinh - Quản lý thông tin thí sinh
-- **`+getAge()`**: Tính tuổi thí sinh dựa trên ngày sinh
-- **`+validate()`**: Kiểm tra tính hợp lệ của thông tin thí sinh (tuổi, SĐT, email)
+- **`+getAge()`**: Tính tuổi thí sinh dựa trên ngày sinh (hiện tại - năm sinh)
+- **`+validate()`**: Kiểm tra tính hợp lệ của thông tin thí sinh
+  - Tuổi: 18-35 tuổi
+  - SĐT: đúng 10 số
+  - Họ tên và địa chỉ không được trống
+- **`+dangKythi(KyThi)`**: Đăng ký tham gia kỳ thi (tạo phiếu đăng ký)
+- **`+xemketqua(KyThi)`**: Xem kết quả thi của thí sinh
 
 ### Class GiamThi - Quản lý giám thị
 - **`+phanCong()`**: Phân công giám thị cho kỳ thi cụ thể
 - **`+toString()`**: Hiển thị thông tin giám thị dạng chuỗi
 
 ### Class KetQua - Quản lý kết quả thi
-- **`+batDauThi()`**: Chuyển trạng thái từ CHƯA_THI → ĐANG_THI
-- **`+nopBai()`**: Chuyển trạng thái từ ĐANG_THI → ĐÃ_NỘP_BÀI → CHƯA_CHẤM
-- **`+batDauCham()`**: Chuyển trạng thái từ CHƯA_CHẤM → ĐANG_CHẤM (ghi nhận người chấm)
-- **`+nhapDiem(diem: double)`**: Nhập điểm và chuyển → ĐÃ_CHẤM
-- **`+capNhatDiem(diem: double)`**: Cập nhật điểm khi đã chấm (chỉ Admin/Giáo vụ)
+- **`+batDauThi()`**: Chuyển trạng thái từ CHƯA_THI → ĐANG_THI (ghi thời gian bắt đầu)
+- **`+nopBai()`**: Chuyển trạng thái từ ĐANG_THI → ĐÃ_NỘP_BÀI → CHƯA_CHẤM (ghi thời gian nộp)
+- **`+batDauCham(nguoiCham, role)`**: Chuyển trạng thái từ CHƯA_CHẤM → ĐANG_CHẤM (ghi nhận người chấm)
+- **`+nhapDiem(diem, nguoiCham, role, ghiChu)`**: Nhập điểm và chuyển → ĐÃ_CHẤM
+- **`+capNhatDiem(diem, nguoiCapNhat, role, ghiChu)`**: Cập nhật điểm khi đã chấm (chỉ Admin/Giáo vụ)
 - **`+getXepLoai()`**: Trả về xếp loại dựa trên điểm (Xuất sắc, Giỏi, Khá, TB, Yếu)
+- **`+coTheXemKetQua()`**: Kiểm tra có thể xem kết quả không
+- **`+kiemTraQuyenCham(username, role)`**: Kiểm tra quyền chấm bài của user
+- **`+kiemTraGiamThiDuocPhanCong(username)`**: Kiểm tra giám thị có được phân công không
 
 ### Class PhieuDangKy - Quản lý đăng ký thi
-- **`+xacNhanTT()`**: Xác nhận thanh toán phí đăng ký
-- **`+taoPhieu()`**: Tạo phiếu đăng ký mới cho thí sinh
+- **`+xacNhanTT()`**: Xác nhận thanh toán phí đăng ký (alias cho `dongPhi()`)
+- **`+taoPhieu(thiSinh, kyThi)`**: Static method tạo phiếu đăng ký mới cho thí sinh
+- **`+dongPhi()`**: Xác nhận đóng phí và cập nhật trạng thái
+- **`+tinhPhi()`**: Tính phí đăng ký dựa trên kỳ thi
 
 ### Class User - Quản lý tài khoản
 - **`+getFullName()`**: Trả về họ tên đầy đủ của người dùng
@@ -235,6 +250,58 @@ batDauThi() → ĐANG_THI → nopBai() → CHƯA_CHẤM → batDauCham() → nha
 ```
 User.role → AuthenticationService → Kiểm tra quyền → Cho phép/Từ chối thao tác
 ```
+
+## 🚨 **Exception Handling System**
+
+Hệ thống được trang bị exception handling toàn diện để xử lý các lỗi nghiệp vụ:
+
+### **Exception Hierarchy:**
+```
+QuanLyKyThiException (base)
+├── ThiSinhValidationException      # Lỗi validation thí sinh
+├── GiamThiValidationException      # Lỗi validation giám thị  
+├── KyThiValidationException        # Lỗi validation kỳ thi
+├── DuplicateException              # Lỗi trùng lặp dữ liệu
+├── NotFoundException               # Không tìm thấy
+├── PermissionException             # Lỗi phân quyền
+├── StateTransitionException        # Lỗi chuyển trạng thái
+├── PaymentException                # Lỗi thanh toán
+├── XMLDatabaseException            # Lỗi cơ sở dữ liệu
+└── AuthenticationException         # Lỗi xác thực
+```
+
+### **Exception Handling trong Methods:**
+
+#### ThiSinh.validate() throws ThiSinhValidationException:
+- ❌ Họ tên rỗng hoặc < 2 ký tự
+- ❌ Họ tên chứa ký tự đặc biệt
+- ❌ Tuổi < 18 hoặc > 35
+- ❌ SĐT không đúng format (10 số, bắt đầu 0)
+- ❌ Địa chỉ rỗng hoặc < 5 ký tự
+- ❌ Giới tính không hợp lệ
+- ❌ Mã thí sinh sai format TSxxx
+
+#### KyThi.themThiSinh() throws:
+- **KyThiValidationException**: Input null, trạng thái kỳ thi không phù hợp
+- **DuplicateException**: Thí sinh đã đăng ký
+- **ThiSinhValidationException**: Thông tin thí sinh không hợp lệ
+
+#### KetQua state methods throws:
+- **StateTransitionException**: Chuyển trạng thái không hợp lệ
+- **PermissionException**: Không có quyền thực hiện
+- **QuanLyKyThiException**: Điểm không hợp lệ (0-10)
+
+#### PhieuDangKy.dongPhi() throws PaymentException:
+- ❌ Đã đóng phí trước đó
+- ❌ Kỳ thi không hợp lệ
+- ❌ Phí đăng ký <= 0
+
+### **Best Practices:**
+✅ **Graceful Error Handling**: Tất cả lỗi được catch và xử lý  
+✅ **Meaningful Messages**: Thông báo lỗi chi tiết, dễ hiểu  
+✅ **Input Validation**: Kiểm tra đầu vào trước khi xử lý  
+✅ **State Validation**: Đảm bảo business logic đúng  
+✅ **Security**: Kiểm tra phân quyền trước mỗi thao tác
 
 ---
 *📝 Lưu ý: Các method được thiết kế theo nguyên tắc Single Responsibility và đảm bảo tính nhất quán dữ liệu*
