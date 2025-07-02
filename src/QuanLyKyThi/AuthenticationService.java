@@ -136,32 +136,115 @@ public class AuthenticationService {
     }
     
     /**
-     * Đăng ký user mới (chỉ admin)
+     * Đăng ký tài khoản mới
      */
-    public boolean registerUser(String username, String password, String hoTen, 
-                               String email, String role) {
+    public boolean register(String username, String password, String hoTen, String email, String role) {
+        try {
+            List<User> users = database.loadUsers();
+            
+            // Kiểm tra username đã tồn tại
+            for (User user : users) {
+                if (user.getUsername().equals(username)) {
+                    System.out.println("❌ Username đã tồn tại");
+                    return false;
+                }
+            }
+            
+            // Kiểm tra email đã tồn tại
+            for (User user : users) {
+                if (user.getEmail().equals(email)) {
+                    System.out.println("❌ Email đã được sử dụng");
+                    return false;
+                }
+            }
+            
+            // Tạo user mới
+            User newUser = new User(username, password, hoTen, email, role);
+            
+            // Nếu role là admin thì cần duyệt, các role khác được active luôn
+            if ("admin".equals(role)) {
+                newUser.setPending(true);
+                newUser.setActive(false);
+                System.out.println("✅ Đăng ký thành công! Tài khoản admin đang chờ duyệt từ admin khác.");
+            } else {
+                newUser.setPending(false);
+                newUser.setActive(true);
+                System.out.println("✅ Đăng ký thành công! Bạn có thể đăng nhập ngay.");
+            }
+            
+            users.add(newUser);
+            database.saveUsers(users);
+            
+            return true;
+        } catch (Exception e) {
+            System.err.println("❌ Lỗi khi đăng ký: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Lấy danh sách tài khoản chờ duyệt (chỉ admin)
+     */
+    public List<User> getPendingUsers() {
         if (!isAdmin()) {
-            System.out.println("❌ Chỉ admin mới có quyền tạo user");
+            System.out.println("❌ Chỉ admin mới có quyền xem danh sách tài khoản chờ duyệt");
+            return null;
+        }
+        
+        List<User> users = database.loadUsers();
+        return users.stream()
+                   .filter(User::isPending)
+                   .collect(java.util.stream.Collectors.toList());
+    }
+    
+    /**
+     * Duyệt tài khoản (chỉ admin)
+     */
+    public boolean approveUser(String username) {
+        if (!isAdmin()) {
+            System.out.println("❌ Chỉ admin mới có quyền duyệt tài khoản");
             return false;
         }
         
         List<User> users = database.loadUsers();
         
-        // Kiểm tra username đã tồn tại
         for (User user : users) {
-            if (user.getUsername().equals(username)) {
-                System.out.println("❌ Username đã tồn tại");
-                return false;
+            if (user.getUsername().equals(username) && user.isPending()) {
+                user.setPending(false);
+                user.setActive(true);
+                database.saveUsers(users);
+                System.out.println("✅ Đã duyệt tài khoản: " + user.getHoTen());
+                return true;
             }
         }
         
-        // Tạo user mới
-        User newUser = new User(username, password, hoTen, email, role);
-        users.add(newUser);
-        database.saveUsers(users);
+        System.out.println("❌ Không tìm thấy tài khoản chờ duyệt với username: " + username);
+        return false;
+    }
+    
+    /**
+     * Từ chối tài khoản (chỉ admin)
+     */
+    public boolean rejectUser(String username) {
+        if (!isAdmin()) {
+            System.out.println("❌ Chỉ admin mới có quyền từ chối tài khoản");
+            return false;
+        }
         
-        System.out.println("✅ Tạo user thành công: " + hoTen);
-        return true;
+        List<User> users = database.loadUsers();
+        
+        for (int i = 0; i < users.size(); i++) {
+            User user = users.get(i);
+            if (user.getUsername().equals(username) && user.isPending()) {
+                users.remove(i);
+                database.saveUsers(users);
+                System.out.println("✅ Đã từ chối tài khoản: " + user.getHoTen());
+                return true;
+            }
+        }
+        
+        System.out.println("❌ Không tìm thấy tài khoản chờ duyệt với username: " + username);
+        return false;
     }
     
     /**

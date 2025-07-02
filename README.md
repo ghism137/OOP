@@ -15,7 +15,8 @@ Hệ thống quản lý kỳ thi được phát triển bằng Java Swing, hỗ 
 ## Tính năng chính
 
 - **🔐 Hệ thống đăng nhập**: Xác thực người dùng với phân quyền theo role
-- **👥 Quản lý Thí sinh**: Đăng ký, xem thông tin thí sinh với form chuyên nghiệp
+- **� Quản lý Tài khoản**: Xem thông tin, đổi mật khẩu, đăng ký tài khoản mới
+- **�👥 Quản lý Thí sinh**: Đăng ký, xem thông tin thí sinh với form chuyên nghiệp
 - **📝 Quản lý Kỳ thi**: Tạo kỳ thi, thêm thí sinh và giám thị với phí riêng biệt
 - **👨‍🏫 Quản lý Giám thị**: Phân công giám thị cho các kỳ thi
 - **📊 Quản lý Kết quả**: Nhập điểm và xem kết quả thi với giao diện trực quan
@@ -318,21 +319,27 @@ Dự án có **3 điểm khởi chạy** chính:
 
 ### 🎯 **Hướng dẫn sử dụng các Form chính:**
 
-#### 1. **Quản lý Thí sinh**
+#### 1. **Quản lý Tài khoản**
+- **Xem thông tin**: Menu → Hệ thống → Thông tin Tài khoản
+- **Đổi mật khẩu**: Menu → Hệ thống → Đổi Mật khẩu
+- **Quản lý người dùng** (Admin): Menu → Hệ thống → Quản lý Tài khoản
+- **Đăng ký tài khoản mới**: Menu → Hệ thống → Đăng ký Tài khoản Mới
+
+#### 2. **Quản lý Thí sinh**
 - **Xem danh sách**: Menu → Quản lý Thí sinh → Danh sách Thí sinh
 - **Thêm mới**: Click "Thêm mới" trong ThiSinhListForm
 - **Sửa/Xóa**: Chọn hàng trong bảng → Click "Sửa" hoặc "Xóa"
 
-#### 2. **Đăng ký Thi**
+#### 3. **Đăng ký Thi**
 - **Đăng ký**: Menu → Quản lý Thi → Đăng ký Thi
 - **Chọn thí sinh** từ ComboBox
 - **Chọn kỳ thi** từ bảng → Click "Đăng ký"
 
-#### 3. **Quản lý Giám thị**
+#### 4. **Quản lý Giám thị**
 - **Xem danh sách**: Menu → Quản lý Giám thị → Danh sách Giám thị
 - **Phân công**: Menu → Quản lý Giám thị → Phân công Giám thị
 
-#### 4. **Nhập điểm và Xem kết quả**
+#### 5. **Nhập điểm và Xem kết quả**
 - **Nhập điểm**: Menu → Quản lý Kết quả → Nhập điểm
 - **Xem kết quả**: Menu → Quản lý Kết quả → Xem kết quả
 - **Thống kê**: Menu → Báo cáo → Thống kê
@@ -638,6 +645,7 @@ System.setProperty("quanly.debug", "true");
 
 ### ✅ **Completed in Current Version:**
 - [x] **Hoàn thiện tất cả GUI Forms**: Đã thay thế tất cả stub forms bằng forms chức năng đầy đủ
+- [x] **Quản lý Tài khoản**: Xem thông tin, đổi mật khẩu, đăng ký tài khoản mới với phân quyền
 - [x] **ThiSinhListForm & AddThiSinhForm**: Quản lý thí sinh hoàn chỉnh
 - [x] **DangKyThiForm**: Đăng ký thi với giao diện trực quan
 - [x] **GiamThiListForm & AddGiamThiForm**: Quản lý giám thị
@@ -645,6 +653,10 @@ System.setProperty("quanly.debug", "true");
 - [x] **NhapDiemForm**: Nhập điểm với validation đầy đủ
 - [x] **XemKetQuaForm**: Xem kết quả với sắp xếp và xếp loại
 - [x] **ThongKeForm**: Thống kê tổng quan và chi tiết
+- [x] **UserManagementForm**: Quản lý tài khoản người dùng (Admin only)
+- [x] **AccountInfoForm**: Xem và chỉnh sửa thông tin tài khoản
+- [x] **ChangePasswordForm**: Đổi mật khẩu với bảo mật cao
+- [x] **RegisterForm**: Đăng ký tài khoản mới với validation
 - [x] **Exception handling**: Xử lý lỗi chuyên nghiệp trong tất cả forms
 - [x] **Database integration**: Tất cả forms kết nối XMLDatabase
 
@@ -743,3 +755,27 @@ Dự án được phát triển cho mục đích học tập tại trường Đ�
   - Mở tất cả forms cùng lúc để kiểm tra
   - Position offset để không chồng lấp
   - Console log tiến trình test
+
+### 👤 **Quản lý Tài khoản**
+- **AccountInfoForm.java**: Form xem và chỉnh sửa thông tin tài khoản
+  - Hiển thị đầy đủ thông tin: Username, Họ tên, Email, Vai trò, Trạng thái, Lần đăng nhập cuối
+  - Chức năng: Cập nhật thông tin, Đổi mật khẩu
+  - Validation đầy đủ và kết nối XMLDatabase
+
+- **ChangePasswordForm.java**: Form đổi mật khẩu bảo mật
+  - Các trường: Mật khẩu hiện tại, Mật khẩu mới, Xác nhận mật khẩu
+  - Validation mạnh: Kiểm tra mật khẩu cũ, độ mạnh mật khẩu mới (tối thiểu 6 ký tự)
+  - Mã hóa SHA-256 cho bảo mật
+  - Giao diện: GridBagLayout với 400x300px
+
+- **RegisterForm.java**: Form đăng ký tài khoản mới
+  - Các trường: Username, Họ tên, Email, Vai trò, Mật khẩu, Xác nhận mật khẩu
+  - Logic phân quyền: Admin cần duyệt, các role khác kích hoạt ngay
+  - Validation đầy đủ: Kiểm tra trùng lặp username/email, format email
+  - Checkbox đồng ý điều khoản sử dụng
+
+- **UserManagementForm.java**: Form quản lý tài khoản (Admin only)
+  - Bảng hiển thị: Username, Họ tên, Email, Vai trò, Trạng thái, Lần đăng nhập cuối
+  - Chức năng: Thêm, Sửa, Xóa, Kích hoạt/Vô hiệu hóa tài khoản
+  - Tìm kiếm và lọc theo vai trò
+  - Bảo vệ tài khoản admin chính khỏi bị xóa

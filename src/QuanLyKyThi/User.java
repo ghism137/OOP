@@ -13,6 +13,8 @@ public class User {
     private String role; // "admin", "giaovu", "user"
     private LocalDateTime lastLogin;
     private boolean isActive;
+    private boolean isPending; // Tài khoản chờ duyệt (chỉ dành cho admin role)
+    private LocalDateTime createdDate;
 
     public User() {}
 
@@ -23,7 +25,9 @@ public class User {
         this.email = email;
         this.role = role;
         this.isActive = true;
+        this.isPending = "admin".equals(role); // Admin role cần duyệt
         this.lastLogin = null;
+        this.createdDate = LocalDateTime.now();
     }
 
     // Getter và Setter methods
@@ -47,6 +51,12 @@ public class User {
 
     public boolean isActive() { return isActive; }
     public void setActive(boolean active) { isActive = active; }
+
+    public boolean isPending() { return isPending; }
+    public void setPending(boolean pending) { isPending = pending; }
+
+    public LocalDateTime getCreatedDate() { return createdDate; }
+    public void setCreatedDate(LocalDateTime createdDate) { this.createdDate = createdDate; }
 
     // Convenience method
     public String getFullName() {

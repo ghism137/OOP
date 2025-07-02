@@ -82,10 +82,16 @@ public class XMLDatabase {
                 userElement.appendChild(createElement(doc, "email", user.getEmail()));
                 userElement.appendChild(createElement(doc, "role", user.getRole()));
                 userElement.appendChild(createElement(doc, "isActive", String.valueOf(user.isActive())));
+                userElement.appendChild(createElement(doc, "isPending", String.valueOf(user.isPending())));
                 
                 if (user.getLastLogin() != null) {
                     userElement.appendChild(createElement(doc, "lastLogin", 
                         user.getLastLogin().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
+                }
+                
+                if (user.getCreatedDate() != null) {
+                    userElement.appendChild(createElement(doc, "createdDate", 
+                        user.getCreatedDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
                 }
                 
                 root.appendChild(userElement);
@@ -124,9 +130,25 @@ public class XMLDatabase {
                     user.setRole(getElementValue(userElement, "role"));
                     user.setActive(Boolean.parseBoolean(getElementValue(userElement, "isActive")));
                     
+                    String isPendingStr = getElementValue(userElement, "isPending");
+                    if (isPendingStr != null && !isPendingStr.isEmpty()) {
+                        user.setPending(Boolean.parseBoolean(isPendingStr));
+                    } else {
+                        // Mặc định: admin role cần duyệt, các role khác không cần
+                        user.setPending("admin".equals(user.getRole()) && !user.isActive());
+                    }
+                    
                     String lastLoginStr = getElementValue(userElement, "lastLogin");
                     if (lastLoginStr != null && !lastLoginStr.isEmpty()) {
                         user.setLastLogin(LocalDateTime.parse(lastLoginStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                    }
+                    
+                    String createdDateStr = getElementValue(userElement, "createdDate");
+                    if (createdDateStr != null && !createdDateStr.isEmpty()) {
+                        user.setCreatedDate(LocalDateTime.parse(createdDateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                    } else {
+                        // Nếu không có createdDate, set thành thời điểm hiện tại
+                        user.setCreatedDate(LocalDateTime.now());
                     }
                     
                     users.add(user);
@@ -542,6 +564,65 @@ public class XMLDatabase {
      */
     public List<User> getAllUsers() {
         return loadUsers();
+    }
+
+    /**
+     * Cập nhật thông tin user
+     */
+    public void updateUser(User updatedUser) throws QuanLyKyThiException {
+        try {
+            List<User> users = loadUsers();
+            boolean found = false;
+            
+            // Tìm và cập nhật user
+            for (int i = 0; i < users.size(); i++) {
+                if (users.get(i).getUsername().equals(updatedUser.getUsername())) {
+                    users.set(i, updatedUser);
+                    found = true;
+                    break;
+                }
+            }
+            
+            if (!found) {
+                throw new QuanLyKyThiException("Không tìm thấy người dùng để cập nhật: " + updatedUser.getUsername());
+            }
+            
+            // Lưu lại danh sách users
+            saveUsers(users);
+            
+        } catch (Exception e) {
+            throw new QuanLyKyThiException("Lỗi khi cập nhật thông tin người dùng: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Xóa user theo username
+     */
+    public void deleteUser(String username) throws QuanLyKyThiException {
+        try {
+            List<User> users = loadUsers();
+            boolean removed = users.removeIf(user -> user.getUsername().equals(username));
+            
+            if (!removed) {
+                throw new QuanLyKyThiException("Không tìm thấy người dùng để xóa: " + username);
+            }
+            
+            saveUsers(users);
+            
+        } catch (Exception e) {
+            throw new QuanLyKyThiException("Lỗi khi xóa người dùng: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Tìm user theo username
+     */
+    public User findUserByUsername(String username) {
+        List<User> users = loadUsers();
+        return users.stream()
+                   .filter(user -> user.getUsername().equals(username))
+                   .findFirst()
+                   .orElse(null);
     }
 
     // ============ UTILITY METHODS ============

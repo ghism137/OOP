@@ -7,7 +7,9 @@
     <email>admin@email.com</email>
     <role>admin</role>
     <isActive>true</isActive>
-    <lastLogin>2025-07-01T17:26:35.1270848</lastLogin>
+    <isPending>false</isPending>
+    <lastLogin>2025-07-02T08:52:27.8653727</lastLogin>
+    <createdDate>2025-07-02T08:52:27.7263725</createdDate>
   </user>
   <user>
     <username>giaovu</username>
@@ -16,6 +18,8 @@
     <email>giaovu@email.com</email>
     <role>giaovu</role>
     <isActive>true</isActive>
+    <isPending>false</isPending>
+    <createdDate>2025-07-02T08:52:27.7263725</createdDate>
   </user>
   <user>
     <username>giaovu2</username>
@@ -24,6 +28,8 @@
     <email>giaovu2@email.com</email>
     <role>giaovu</role>
     <isActive>true</isActive>
+    <isPending>false</isPending>
+    <createdDate>2025-07-02T08:52:27.7263725</createdDate>
   </user>
   <user>
     <username>user1</username>
@@ -32,6 +38,8 @@
     <email>user1@email.com</email>
     <role>user</role>
     <isActive>true</isActive>
+    <isPending>false</isPending>
+    <createdDate>2025-07-02T08:52:27.7263725</createdDate>
   </user>
   <user>
     <username>user2</username>
@@ -40,6 +48,8 @@
     <email>user2@email.com</email>
     <role>user</role>
     <isActive>true</isActive>
+    <isPending>false</isPending>
+    <createdDate>2025-07-02T08:52:27.7263725</createdDate>
   </user>
   <user>
     <username>thisinh1</username>
@@ -48,6 +58,8 @@
     <email>thisinh1@email.com</email>
     <role>thisinh</role>
     <isActive>true</isActive>
+    <isPending>false</isPending>
+    <createdDate>2025-07-02T08:52:27.7263725</createdDate>
   </user>
   <user>
     <username>thisinh2</username>
@@ -56,5 +68,29 @@
     <email>thisinh2@email.com</email>
     <role>thisinh</role>
     <isActive>true</isActive>
+    <isPending>false</isPending>
+    <createdDate>2025-07-02T08:52:27.7263725</createdDate>
+  </user>
+  <user>
+    <username>testuser</username>
+    <password>newpassword</password>
+    <hoTen>Test User</hoTen>
+    <email>test@email.com</email>
+    <role>thisinh</role>
+    <isActive>true</isActive>
+    <isPending>false</isPending>
+    <lastLogin>2025-07-02T08:52:27.8482932</lastLogin>
+    <createdDate>2025-07-02T08:52:27.7263725</createdDate>
+  </user>
+  <user>
+    <username>newadmin</username>
+    <password>123456</password>
+    <hoTen>New Admin</hoTen>
+    <email>newadmin@email.com</email>
+    <role>admin</role>
+    <isActive>true</isActive>
+    <isPending>false</isPending>
+    <lastLogin>2025-07-02T08:52:27.8876115</lastLogin>
+    <createdDate>2025-07-02T08:52:27.7263725</createdDate>
   </user>
 </users>

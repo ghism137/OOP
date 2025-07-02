@@ -75,11 +75,18 @@ public class MainGUIWithAuth extends JFrame {
     }
     
     private void saveDataToXML() {
-        database.saveKyThi(danhSachKyThi);
-        database.saveThiSinh(danhSachThiSinh);
-        database.saveGiamThi(danhSachGiamThi);
+        try {
+            database.saveKyThi(danhSachKyThi);
+            database.saveThiSinh(danhSachThiSinh);  
+            database.saveGiamThi(danhSachGiamThi);
+            statusLabel.setText("Đã lưu dữ liệu thành công vào XML files | " + 
+                               java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss")));
+            JOptionPane.showMessageDialog(this, "Lưu dữ liệu thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi lưu dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
-    
+
     private void initComponents() {
         User currentUser = authService.getCurrentUser();
         setTitle("Hệ Thống Quản Lý Kỳ Thi - " + currentUser.getHoTen() + " (" + currentUser.getRole() + ")");
@@ -137,15 +144,24 @@ public class MainGUIWithAuth extends JFrame {
         menuSystem = new JMenu("Hệ Thống");
         JMenuItem itemProfile = new JMenuItem("Thông Tin Tài Khoản");
         JMenuItem itemChangePassword = new JMenuItem("Đổi Mật Khẩu");
+        JMenuItem itemUserManagement = new JMenuItem("Quản Lý Tài Khoản");
+        JMenuItem itemRegister = new JMenuItem("Đăng Ký Tài Khoản Mới");
         JMenuItem itemSaveData = new JMenuItem("Lưu Dữ Liệu");
         JMenuItem itemLoadData = new JMenuItem("Tải Lại Dữ Liệu");
-        menuSystem.addSeparator();
         JMenuItem itemLogout = new JMenuItem("Đăng Xuất");
         JMenuItem itemExit = new JMenuItem("Thoát");
         
         menuSystem.add(itemProfile);
         menuSystem.add(itemChangePassword);
         menuSystem.addSeparator();
+        
+        // Chỉ admin mới có quyền quản lý tài khoản
+        if (authService.isAdmin()) {
+            menuSystem.add(itemUserManagement);
+            menuSystem.add(itemRegister);
+            menuSystem.addSeparator();
+        }
+        
         menuSystem.add(itemSaveData);
         menuSystem.add(itemLoadData);
         menuSystem.addSeparator();
@@ -169,8 +185,8 @@ public class MainGUIWithAuth extends JFrame {
         setupEventHandlers(itemDSKyThi, itemThemKyThi, itemDSThiSinh, itemThemThiSinh, 
                           itemDangKyThi, itemDSGiamThi, itemThemGiamThi, itemPhanCong,
                           itemQuanLyTrangThai, itemNhapDiem, itemXemKetQua, itemThongKe,
-                          itemProfile, itemChangePassword, itemSaveData, itemLoadData,
-                          itemLogout, itemExit);
+                          itemProfile, itemChangePassword, itemUserManagement, itemRegister,
+                          itemSaveData, itemLoadData, itemLogout, itemExit);
     }
     
     private void setupLayout() {
@@ -234,10 +250,12 @@ public class MainGUIWithAuth extends JFrame {
         // System
         items[12].addActionListener(e -> showUserProfile());
         items[13].addActionListener(e -> showChangePasswordDialog());
-        items[14].addActionListener(e -> saveDataToXML());
-        items[15].addActionListener(e -> loadDataFromXML());
-        items[16].addActionListener(e -> handleLogout());
-        items[17].addActionListener(e -> handleExit());
+        items[14].addActionListener(e -> openUserManagementForm());
+        items[15].addActionListener(e -> openRegisterForm());
+        items[16].addActionListener(e -> saveDataToXML());
+        items[17].addActionListener(e -> loadDataFromXML());
+        items[18].addActionListener(e -> handleLogout());
+        items[19].addActionListener(e -> handleExit());
     }
     
     // Methods để mở các form (giống MainGUI cũ)
@@ -314,76 +332,91 @@ public class MainGUIWithAuth extends JFrame {
         addInternalFrame(form, "Thống Kê");
     }
     
-    // System methods
+    /**
+     * Hiển thị thông tin tài khoản người dùng
+     */
     private void showUserProfile() {
-        User user = authService.getCurrentUser();
-        String info = "Thông tin tài khoản:\\n\\n" +
-                     "Username: " + user.getUsername() + "\\n" +
-                     "Họ tên: " + user.getHoTen() + "\\n" +
-                     "Email: " + user.getEmail() + "\\n" +
-                     "Quyền: " + user.getRole() + "\\n" +
-                     "Trạng thái: " + (user.isActive() ? "Hoạt động" : "Bị khóa") + "\\n" +
-                     "Đăng nhập cuối: " + (user.getLastLogin() != null ? user.getLastLogin() : "Chưa có");
-        
-        JOptionPane.showMessageDialog(this, info, "Thông Tin Tài Khoản", JOptionPane.INFORMATION_MESSAGE);
+        User currentUser = authService.getCurrentUser();
+        AccountInfoForm accountForm = new AccountInfoForm(currentUser);
+        accountForm.setVisible(true);
     }
-    
+
+    /**
+     * Hiển thị form đổi mật khẩu
+     */
     private void showChangePasswordDialog() {
-        JPasswordField oldPassword = new JPasswordField();
-        JPasswordField newPassword = new JPasswordField();
-        JPasswordField confirmPassword = new JPasswordField();
-        
-        Object[] message = {
-            "Mật khẩu cũ:", oldPassword,
-            "Mật khẩu mới:", newPassword,
-            "Xác nhận mật khẩu:", confirmPassword
-        };
-        
-        int option = JOptionPane.showConfirmDialog(this, message, "Đổi Mật Khẩu", JOptionPane.OK_CANCEL_OPTION);
-        
-        if (option == JOptionPane.OK_OPTION) {
-            String oldPass = new String(oldPassword.getPassword());
-            String newPass = new String(newPassword.getPassword());
-            String confirmPass = new String(confirmPassword.getPassword());
-            
-            if (!newPass.equals(confirmPass)) {
-                JOptionPane.showMessageDialog(this, "Mật khẩu xác nhận không khớp!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            if (authService.changePassword(oldPass, newPass)) {
-                JOptionPane.showMessageDialog(this, "Đổi mật khẩu thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "Đổi mật khẩu thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        User currentUser = authService.getCurrentUser();
+        ChangePasswordForm changePasswordForm = new ChangePasswordForm(currentUser);
+        changePasswordForm.setVisible(true);
     }
-    
+
+    /**
+     * Mở form quản lý tài khoản người dùng (chỉ admin)
+     */
+    private void openUserManagementForm() {
+        if (!authService.isAdmin()) {
+            JOptionPane.showMessageDialog(this, 
+                "Chỉ quản trị viên mới có quyền quản lý tài khoản người dùng!", 
+                "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        UserManagementForm userManagementForm = new UserManagementForm(authService.getCurrentUser());
+        userManagementForm.setVisible(true);
+    }
+
+    /**
+     * Mở form đăng ký tài khoản mới
+     */
+    private void openRegisterForm() {
+        RegisterForm registerForm = new RegisterForm();
+        registerForm.setVisible(true);
+    }
+
+    /**
+     * Xử lý đăng xuất
+     */
     private void handleLogout() {
-        int confirm = JOptionPane.showConfirmDialog(this, 
-            "Bạn có chắc chắn muốn đăng xuất?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+        int choice = JOptionPane.showConfirmDialog(this,
+            "Bạn có chắc chắn muốn đăng xuất?",
+            "Xác nhận đăng xuất",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE);
         
-        if (confirm == JOptionPane.YES_OPTION) {
-            saveDataToXML(); // Lưu dữ liệu trước khi đăng xuất
-            authService.logout();
-            dispose();
-            new LoginForm().setVisible(true);
-        }
-    }
-    
-    private void handleExit() {
-        int confirm = JOptionPane.showConfirmDialog(this, 
-            "Bạn có muốn lưu dữ liệu trước khi thoát?", "Xác nhận", JOptionPane.YES_NO_CANCEL_OPTION);
-        
-        if (confirm == JOptionPane.YES_OPTION) {
+        if (choice == JOptionPane.YES_OPTION) {
+            // Lưu dữ liệu trước khi đăng xuất
             saveDataToXML();
-            System.exit(0);
-        } else if (confirm == JOptionPane.NO_OPTION) {
+            
+            // Đóng cửa sổ hiện tại
+            dispose();
+            
+            // Quay lại màn hình đăng nhập
+            startLoginProcess();
+        }
+    }
+
+    /**
+     * Xử lý thoát ứng dụng
+     */
+    private void handleExit() {
+        int choice = JOptionPane.showConfirmDialog(this,
+            "Bạn có chắc chắn muốn thoát ứng dụng?",
+            "Xác nhận thoát",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE);
+        
+        if (choice == JOptionPane.YES_OPTION) {
+            // Lưu dữ liệu trước khi thoát
+            saveDataToXML();
+            
+            JOptionPane.showMessageDialog(this,
+                "Cảm ơn bạn đã sử dụng Hệ Thống Quản Lý Kỳ Thi!",
+                "Tạm biệt", JOptionPane.INFORMATION_MESSAGE);
+            
             System.exit(0);
         }
-        // Cancel: không làm gì
     }
-    
+
     private void addInternalFrame(JInternalFrame frame, String title) {
         frame.setTitle(title);
         frame.setClosable(true);
