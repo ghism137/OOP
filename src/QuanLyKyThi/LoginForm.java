@@ -162,35 +162,30 @@ public class LoginForm extends JFrame {
         buttonPanel.add(btnExit);
         loginPanel.add(buttonPanel, gbc);
         
-        // Thông tin tài khoản mẫu
-        gbc.gridy = 6;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.insets = new Insets(15, 10, 10, 10); // Thêm margin top
-        JLabel infoLabel = new JLabel("<html><div style='text-align: center; line-height: 1.4;'>" +
-            "<small><b>📋 Tài khoản demo:</b><br/>" +
-            "🔑 <b>Admin:</b> admin/admin123<br/>" +
-            "📚 <b>Giáo vụ:</b> giaovu/gv123<br/>" +
-            "👤 <b>User:</b> user1/user123<br/>" +
-            "🎓 <b>Thí sinh:</b> thisinh1/ts123</small></div></html>");
-        infoLabel.setFont(new Font("Arial", Font.PLAIN, 11)); // Tăng font size một chút
-        infoLabel.setForeground(new Color(70, 70, 70)); // Màu xám đậm hơn để dễ đọc
-        infoLabel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1),
-            BorderFactory.createEmptyBorder(8, 12, 8, 12)
-        )); // Thêm border và padding
-        infoLabel.setOpaque(true);
-        infoLabel.setBackground(new Color(248, 248, 248)); // Background nhẹ
-        loginPanel.add(infoLabel, gbc);
-        
         // Thêm vào main panel
         mainPanel.add(loginPanel);
         add(mainPanel);
         
+        // Debug: In ra thông tin về size và layout
+        System.out.println("LoginForm - MainPanel size: " + mainPanel.getPreferredSize());
+        System.out.println("LoginForm - LoginPanel size: " + loginPanel.getPreferredSize());
+        System.out.println("LoginForm - Components count: " + loginPanel.getComponentCount());
+    
         // Event handlers
         setupEventHandlers();
         
+        // Force repaint và validate
+        validate();
+        repaint();
+        
         // Focus vào username
-        SwingUtilities.invokeLater(() -> txtUsername.requestFocus());
+        SwingUtilities.invokeLater(() -> {
+            txtUsername.requestFocus();
+            // Debug: Kiểm tra visibility
+            System.out.println("LoginForm - Frame visible: " + isVisible());
+            System.out.println("LoginForm - Frame size: " + getSize());
+            System.out.println("LoginForm - Components visible: " + loginPanel.isVisible());
+        });
     }
     
     private void setupEventHandlers() {
@@ -303,16 +298,19 @@ public class LoginForm extends JFrame {
                 
                 // Lấy thông tin user hiện tại
                 User currentUser = authService.getCurrentUser();
-                
-                // Chuyển hướng theo role
-                SwingUtilities.invokeLater(() -> {
-                    redirectBasedOnRole(currentUser);
-                    dispose();
-                });
+                System.out.println("LoginForm - Đăng nhập thành công: " + currentUser.getHoTen() + " (" + currentUser.getRole() + ")");
                 
                 // Gọi callback nếu có
                 if (loginSuccessCallback != null) {
+                    System.out.println("LoginForm - Sử dụng callback để mở MainGUIWithAuth");
                     loginSuccessCallback.accept(authService);
+                } else {
+                    System.out.println("LoginForm - Sử dụng logic mặc định để chuyển hướng");
+                    // Chuyển hướng theo role
+                    SwingUtilities.invokeLater(() -> {
+                        redirectBasedOnRole(currentUser);
+                        dispose();
+                    });
                 }
             } else {
                 showStatus("Sai tên đăng nhập hoặc mật khẩu!", Color.RED);

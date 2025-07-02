@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<thiSinhList>
+  <thiSinh>
+    <maThiSinh>TS001</maThiSinh>
+    <hoTen>Nguyễn Văn A</hoTen>
+    <ngaySinh>2003-05-10</ngaySinh>
+    <gioiTinh>Nam</gioiTinh>
+    <diaChi>Hà Nội</diaChi>
+    <sdt>0123456789</sdt>
+  </thiSinh>
+  <thiSinh>
+    <maThiSinh>TS002</maThiSinh>
+    <hoTen>Trần Thị B</hoTen>
+    <ngaySinh>2003-08-20</ngaySinh>
+    <gioiTinh>Nữ</gioiTinh>
+    <diaChi>Hồ Chí Minh</diaChi>
+    <sdt>0987654321</sdt>
+  </thiSinh>
+</thiSinhList>

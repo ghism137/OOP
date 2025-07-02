@@ -28,23 +28,43 @@ public class MainGUIWithAuth extends JFrame {
         this.authService = authService;
         this.database = new XMLDatabase();
         
-        loadDataFromXML();
+        // Khởi tạo UI trước
         initComponents();
         setupLayout();
         updateUIForUserRole();
+        
+        // Sau đó load dữ liệu (có thể gọi saveDataToXML)
+        loadDataFromXML();
+        
         setVisible(true);
     }
     
     private void loadDataFromXML() {
-        // Load dữ liệu từ XML
-        danhSachKyThi = database.loadKyThi();
-        danhSachThiSinh = database.loadThiSinh();
-        danhSachGiamThi = database.loadGiamThi();
-        
-        // Nếu chưa có dữ liệu thì tạo mẫu
-        if (danhSachKyThi.isEmpty()) {
-            createSampleData();
-            saveDataToXML();
+        try {
+            // Load dữ liệu từ XML
+            danhSachKyThi = database.loadKyThi();
+            danhSachThiSinh = database.loadThiSinh();
+            danhSachGiamThi = database.loadGiamThi();
+            
+            System.out.println("MainGUIWithAuth - Loaded data:");
+            System.out.println("  - Kỳ thi: " + danhSachKyThi.size());
+            System.out.println("  - Thí sinh: " + danhSachThiSinh.size()); 
+            System.out.println("  - Giám thị: " + danhSachGiamThi.size());
+            
+            // Nếu chưa có dữ liệu thì tạo mẫu
+            if (danhSachKyThi.isEmpty()) {
+                System.out.println("MainGUIWithAuth - Creating sample data...");
+                createSampleData();
+                saveDataToXML();
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi load dữ liệu từ XML: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Khởi tạo dữ liệu trống để tránh NullPointerException
+            if (danhSachKyThi == null) danhSachKyThi = new ArrayList<>();
+            if (danhSachThiSinh == null) danhSachThiSinh = new ArrayList<>();
+            if (danhSachGiamThi == null) danhSachGiamThi = new ArrayList<>();
         }
     }
     
@@ -79,11 +99,26 @@ public class MainGUIWithAuth extends JFrame {
             database.saveKyThi(danhSachKyThi);
             database.saveThiSinh(danhSachThiSinh);  
             database.saveGiamThi(danhSachGiamThi);
-            statusLabel.setText("Đã lưu dữ liệu thành công vào XML files | " + 
-                               java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss")));
-            JOptionPane.showMessageDialog(this, "Lưu dữ liệu thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            
+            // Kiểm tra xem statusLabel đã được khởi tạo chưa
+            if (statusLabel != null) {
+                statusLabel.setText("Đã lưu dữ liệu thành công vào XML files | " + 
+                                   java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss")));
+            }
+            
+            // Chỉ hiển thị dialog nếu frame đã hiển thị (tránh popup khi khởi tạo)
+            if (isVisible()) {
+                JOptionPane.showMessageDialog(this, "Lưu dữ liệu thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi khi lưu dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            // Log lỗi chi tiết để debug
+            System.err.println("Lỗi khi lưu dữ liệu: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Chỉ hiển thị dialog lỗi nếu frame đã hiển thị
+            if (isVisible()) {
+                JOptionPane.showMessageDialog(this, "Lỗi khi lưu dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
