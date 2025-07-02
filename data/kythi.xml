@@ -9,10 +9,16 @@
   </kyThi>
   <kyThi>
     <maKyThi>KT002</maKyThi>
-    <tenKyThi>Kỳ thi Cấu trúc dữ liệu</tenKyThi>
-    <ngayToChuc>2025-09-10</ngayToChuc>
-    <tinhTrang>Sắp diễn ra</tinhTrang>
-    <phiDangKy>120.0</phiDangKy>
+    <tenKyThi>Kỳ thi Web Development</tenKyThi>
+    <ngayToChuc>2025-07-20</ngayToChuc>
+    <tinhTrang>Đang diễn ra</tinhTrang>
+    <phiDangKy>200.0</phiDangKy>
+  </kyThi>
+  <kyThi>
+    <maKyThi>KT003</maKyThi>
+    <tenKyThi>Kỳ thi Database</tenKyThi>
+    <ngayToChuc>2025-06-10</ngayToChuc>
+    <tinhTrang>Đã kết thúc</tinhTrang>
+    <phiDangKy>180.0</phiDangKy>
   </kyThi>
 </kyThiList>
-//free

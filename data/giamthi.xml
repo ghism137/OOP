@@ -12,4 +12,10 @@
     <donVi>Trường ĐHCN</donVi>
     <sdt>0444555666</sdt>
   </giamThi>
+  <giamThi>
+    <maGiamThi>GT001</maGiamThi>
+    <hoTen>Phạm Văn C</hoTen>
+    <donVi>Trường ĐHCN</donVi>
+    <sdt>0111222333</sdt>
+  </giamThi>
 </giamThiList>

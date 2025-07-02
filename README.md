@@ -131,22 +131,22 @@ Hệ thống được thiết kế theo mô hình **MVC (Model-View-Controller)*
             │                │   KetQua    │         ├─────────────┤
             │                ├─────────────┤         │-username    │
             └─────────────1:N│-thiSinh     │         │-password    │
-                            │-kyThi       │         │-role        │
-                            │-diem        │         │-email       │
-                            │-trangThai   │◆──────▶ │+getFullName()│
-                            │-nguoiCham   │         └─────────────┘
-                            │-thoiGianCham│
-                            ├─────────────┤               │1:1
-                            │+batDauThi() │               ▼
-                            │+nopBai()    │      ┌─────────────┐
-                            │+nhapDiem()  │      │PhieuDangKy  │
-                            └─────────────┘      ├─────────────┤
-                                   │1:1          │-thiSinh     │
-                                   ▼             │-kyThi       │
-                        ┌─────────────────┐      │-phiDangKy   │
-                        │ TrangThaiBaiThi │      │-daThanhToan │
-                        │   <<enum>>      │      │+taoPhieu()  │
-                        ├─────────────────┤      └─────────────┘
+                             │-kyThi       │         │-role        │
+                             │-diem        │         │-email       │
+                             │-trangThai   │◆──────▶ │+getFullName()│
+                             │-nguoiCham   │         └─────────────┘
+                             │-thoiGianCham│
+                             ├─────────────┤               │1:1
+                             │+batDauThi() │               ▼
+                             │+nopBai()    │        ┌─────────────┐
+                             │+nhapDiem()  │        │PhieuDangKy  │
+                             └─────────────┘        ├─────────────┤
+                                   │1:1             │-thiSinh     │
+                                   ▼                │-kyThi       │
+                        ┌─────────────────┐         │-phiDangKy   │
+                        │ TrangThaiBaiThi │         │-daThanhToan │
+                        │   <<enum>>      │         │+taoPhieu()  │
+                        ├─────────────────┤         └─────────────┘
                         │ CHUA_THI        │
                         │ DANG_THI        │
                         │ DA_NOP_BAI      │
@@ -190,14 +190,14 @@ Hệ thống được thiết kế theo mô hình **MVC (Model-View-Controller)*
 ```
                         HỆ THỐNG PHÂN QUYỀN
 
-    ┌─────────────┐                    ┌─────────────────────────────────┐
-    │👨‍💼 ADMIN    │                    │        CÁC CHỨC NĂNG            │
+    ┌─────────────┐                     ┌─────────────────────────────────┐
+    │👨‍💼 ADMIN    │                     │        CÁC CHỨC NĂNG            │
     │             │──────────────────▶ │                                 │
-    │Toàn quyền   │ ✅ CÓ TẤT CẢ      │ 🔐 Quản lý tài khoản            │
+    │Toàn quyền   │ ✅ CÓ TẤT CẢ       │ 🔐 Quản lý tài khoản            │
     └─────────────┘                    │ 📝 Tạo/sửa kỳ thi               │
                                        │ 👨‍🏫 Quản lý giám thị             │
     ┌─────────────┐                    │ ⚡ Bắt đầu thi                   │
-    │👩‍🏫 GIÁO VỤ  │                    │ 📄 Nộp bài                      │
+    │👩‍🏫 GIÁO VỤ  │                     │ 📄 Nộp bài                      │
     │             │──────────────────▶ │ 🔍 Bắt đầu chấm bài             │
     │Quản lý học  │ ❌ KHÔNG: Bắt đầu  │ ✏️  Nhập điểm                    │
     │             │    thi, Nộp bài    │ 🔄 Cập nhật điểm                │
