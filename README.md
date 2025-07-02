@@ -284,12 +284,12 @@ Dự án có **2 điểm khởi chạy** chính:
 ### 🔐 Authentication Flow (Luồng đăng nhập):
 Khi sử dụng `LoginForm.main()`, hệ thống sẽ tự động chuyển hướng theo quyền:
 
-| Role | Username/Password | Chuyển hướng đến | Quyền hạn |
-|------|-------------------|------------------|-----------|
-| **Admin** | `admin/admin123` | `MainGUIWithAuth` | Toàn quyền: CRUD tất cả |
-| **Giáo vụ** | `giaovu/gv123` | `MainGUIWithAuth` | Quản lý kỳ thi, nhập điểm, thống kê |
-| **User** | `user1/user123` | `MainGUI` | Xem thông tin, đăng ký thi |
-| **Thí sinh** | `thisinh1/ts123` | `MainGUI` | Chỉ xem kết quả của mình |
+| Role         | Username/Password | Chuyển hướng đến  |             Quyền hạn               |
+|--------------|-------------------|-------------------|-------------------------------------|
+| **Admin**    | `admin/admin123`  | `MainGUIWithAuth` | Toàn quyền: CRUD tất cả             |
+| **Giáo vụ**  | `giaovu/gv123`    | `MainGUIWithAuth` | Quản lý kỳ thi, nhập điểm, thống kê |
+| **User**     | `user1/user123`   |     `MainGUI`     | Xem thông tin, đăng ký thi          |
+| **Thí sinh** | `thisinh1/ts123`  |     `MainGUI`     | Chỉ xem kết quả của mình            |
 
 **💡 Tài khoản mẫu khác:**
 - `giaovu2/gv456`, `user2/user456`, `thisinh2/ts456`

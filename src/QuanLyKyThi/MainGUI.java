@@ -69,7 +69,7 @@ public class MainGUI extends JFrame {
     private void initComponents() {
         setTitle("Hệ Thống Quản Lý Kỳ Thi");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setExtendedState(JFrame.NORMAL); // Chỉnh lại trạng thái cửa sổ (bản gốc là JFrame.MAXIMIZED_BOTH)
         
         // Tạo menu bar
         menuBar = new JMenuBar();

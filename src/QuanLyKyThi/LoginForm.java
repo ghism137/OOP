@@ -1,6 +1,10 @@
 package QuanLyKyThi;
 
+// Thêm import cho callback interface
+import java.util.function.Consumer;
+
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -15,15 +19,26 @@ public class LoginForm extends JFrame {
     private JLabel lblStatus;
     private AuthenticationService authService;
     
+    // Callback để xử lý kết quả đăng nhập
+    private Consumer<AuthenticationService> loginSuccessCallback;
+    private Runnable loginCancelCallback;
+    
     public LoginForm() {
         this.authService = new AuthenticationService();
         initComponents();
     }
     
+    // Constructor với callback
+    public LoginForm(Consumer<AuthenticationService> onLoginSuccess, Runnable onLoginCancel) {
+        this();
+        this.loginSuccessCallback = onLoginSuccess;
+        this.loginCancelCallback = onLoginCancel;
+    }
+    
     private void initComponents() {
-        setTitle("Đăng Nhập - Hệ Thống Quản Lý Kỳ Thi");
+        setTitle("🔐 Đăng Nhập - Hệ Thống Quản Lý Kỳ Thi");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(450, 350);
+        setSize(800, 600); // Tăng kích thước cửa sổ
         setLocationRelativeTo(null);
         setResizable(false);
         
@@ -81,30 +96,32 @@ public class LoginForm extends JFrame {
         // Username
         gbc.gridx = 0; gbc.gridy = 2;
         JLabel lblUsername = new JLabel("Tên đăng nhập:");
-        lblUsername.setFont(new Font("Arial", Font.BOLD, 12));
+        lblUsername.setFont(new Font("Arial", Font.BOLD, 14));
         loginPanel.add(lblUsername, gbc);
         
         gbc.gridx = 1;
-        txtUsername = new JTextField(15);
-        txtUsername.setFont(new Font("Arial", Font.PLAIN, 12));
+        txtUsername = new JTextField(20); // Tăng từ 15 lên 20
+        txtUsername.setFont(new Font("Arial", Font.PLAIN, 14)); // Tăng font size
+        txtUsername.setPreferredSize(new Dimension(200, 35)); // Thiết lập size cố định
         txtUsername.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLoweredBevelBorder(),
-            BorderFactory.createEmptyBorder(5, 5, 5, 5)
+            BorderFactory.createEmptyBorder(8, 8, 8, 8) // Tăng padding
         ));
         loginPanel.add(txtUsername, gbc);
         
         // Password
         gbc.gridx = 0; gbc.gridy = 3;
         JLabel lblPassword = new JLabel("Mật khẩu:");
-        lblPassword.setFont(new Font("Arial", Font.BOLD, 12));
+        lblPassword.setFont(new Font("Arial", Font.BOLD, 14)); // Tăng font size
         loginPanel.add(lblPassword, gbc);
         
         gbc.gridx = 1;
-        txtPassword = new JPasswordField(15);
-        txtPassword.setFont(new Font("Arial", Font.PLAIN, 12));
+        txtPassword = new JPasswordField(20); // Tăng từ 15 lên 20
+        txtPassword.setFont(new Font("Arial", Font.PLAIN, 14)); // Tăng font size
+        txtPassword.setPreferredSize(new Dimension(200, 35)); // Thiết lập size cố định
         txtPassword.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLoweredBevelBorder(),
-            BorderFactory.createEmptyBorder(5, 5, 5, 5)
+            BorderFactory.createEmptyBorder(8, 8, 8, 8) // Tăng padding
         ));
         loginPanel.add(txtPassword, gbc);
         
@@ -113,29 +130,33 @@ public class LoginForm extends JFrame {
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         lblStatus = new JLabel(" ");
-        lblStatus.setFont(new Font("Arial", Font.ITALIC, 11));
+        lblStatus.setFont(new Font("Arial", Font.ITALIC, 12)); // Tăng font size
         lblStatus.setForeground(Color.RED);
+        lblStatus.setPreferredSize(new Dimension(300, 25)); // Thiết lập height cố định
         loginPanel.add(lblStatus, gbc);
         
         // Buttons
         gbc.gridy = 5;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        JPanel buttonPanel = new JPanel(new FlowLayout());
+        gbc.insets = new Insets(10, 10, 10, 10); // Thêm margin
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5)); // Tăng khoảng cách giữa buttons
         buttonPanel.setOpaque(false);
         
-        btnLogin = new JButton("Đăng Nhập");
+        btnLogin = new JButton("ĐĂNG NHẬP");
         btnLogin.setBackground(new Color(0, 153, 0));
-        btnLogin.setForeground(Color.WHITE);
-        btnLogin.setFont(new Font("Arial", Font.BOLD, 12));
+        btnLogin.setForeground(Color.BLACK); // Thay đổi thành màu đen  
+        btnLogin.setFont(new Font("Arial", Font.BOLD, 14)); // Tăng font size
         btnLogin.setFocusPainted(false);
-        btnLogin.setPreferredSize(new Dimension(100, 35));
+        btnLogin.setPreferredSize(new Dimension(130, 40)); // Tăng kích thước button
+        btnLogin.setBorder(BorderFactory.createRaisedBevelBorder()); // Thêm border rõ ràng
         
-        btnExit = new JButton("Thoát");
+        btnExit = new JButton("THOÁT");
         btnExit.setBackground(new Color(204, 0, 0));
-        btnExit.setForeground(Color.WHITE);
-        btnExit.setFont(new Font("Arial", Font.BOLD, 12));
+        btnExit.setForeground(Color.BLACK); // Thay đổi thành màu đen
+        btnExit.setFont(new Font("Arial", Font.BOLD, 14)); // Tăng font size
         btnExit.setFocusPainted(false);
-        btnExit.setPreferredSize(new Dimension(100, 35));
+        btnExit.setPreferredSize(new Dimension(130, 40)); // Tăng kích thước button
+        btnExit.setBorder(BorderFactory.createRaisedBevelBorder()); // Thêm border rõ ràng
         
         buttonPanel.add(btnLogin);
         buttonPanel.add(btnExit);
@@ -144,14 +165,21 @@ public class LoginForm extends JFrame {
         // Thông tin tài khoản mẫu
         gbc.gridy = 6;
         gbc.fill = GridBagConstraints.NONE;
-        JLabel infoLabel = new JLabel("<html><div style='text-align: center;'>" +
-            "<small>Tài khoản mẫu:<br/>" +
-            "<b>Admin:</b> admin/admin123<br/>" +
-            "<b>Giáo vụ:</b> giaovu/gv123<br/>" +
-            "<b>User:</b> user1/user123<br/>" +
-            "<b>Thí sinh:</b> thisinh1/ts123</small></div></html>");
-        infoLabel.setFont(new Font("Arial", Font.PLAIN, 10));
-        infoLabel.setForeground(Color.GRAY);
+        gbc.insets = new Insets(15, 10, 10, 10); // Thêm margin top
+        JLabel infoLabel = new JLabel("<html><div style='text-align: center; line-height: 1.4;'>" +
+            "<small><b>📋 Tài khoản demo:</b><br/>" +
+            "🔑 <b>Admin:</b> admin/admin123<br/>" +
+            "📚 <b>Giáo vụ:</b> giaovu/gv123<br/>" +
+            "👤 <b>User:</b> user1/user123<br/>" +
+            "🎓 <b>Thí sinh:</b> thisinh1/ts123</small></div></html>");
+        infoLabel.setFont(new Font("Arial", Font.PLAIN, 11)); // Tăng font size một chút
+        infoLabel.setForeground(new Color(70, 70, 70)); // Màu xám đậm hơn để dễ đọc
+        infoLabel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1),
+            BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        )); // Thêm border và padding
+        infoLabel.setOpaque(true);
+        infoLabel.setBackground(new Color(248, 248, 248)); // Background nhẹ
         loginPanel.add(infoLabel, gbc);
         
         // Thêm vào main panel
@@ -190,6 +218,61 @@ public class LoginForm extends JFrame {
         
         // Tab để chuyển focus
         txtUsername.addActionListener(e -> txtPassword.requestFocus());
+        
+        // Thêm hiệu ứng hover cho buttons
+        addButtonHoverEffects();
+    }
+    
+    private void addButtonHoverEffects() {
+        // Hiệu ứng hover cho button Đăng nhập
+        btnLogin.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnLogin.setBackground(new Color(0, 180, 0)); // Xanh sáng hơn
+                btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+            
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnLogin.setBackground(new Color(0, 153, 0)); // Xanh ban đầu
+                btnLogin.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+            
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btnLogin.setBackground(new Color(0, 120, 0)); // Xanh đậm khi nhấn
+            }
+            
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                btnLogin.setBackground(new Color(0, 180, 0)); // Quay lại màu hover
+            }
+        });
+        
+        // Hiệu ứng hover cho button Thoát
+        btnExit.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnExit.setBackground(new Color(230, 0, 0)); // Đỏ sáng hơn
+                btnExit.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+            
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnExit.setBackground(new Color(204, 0, 0)); // Đỏ ban đầu
+                btnExit.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+            
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btnExit.setBackground(new Color(180, 0, 0)); // Đỏ đậm khi nhấn
+            }
+            
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                btnExit.setBackground(new Color(230, 0, 0)); // Quay lại màu hover
+            }
+        });
     }
     
     private void performLogin() {
@@ -226,6 +309,11 @@ public class LoginForm extends JFrame {
                     redirectBasedOnRole(currentUser);
                     dispose();
                 });
+                
+                // Gọi callback nếu có
+                if (loginSuccessCallback != null) {
+                    loginSuccessCallback.accept(authService);
+                }
             } else {
                 showStatus("Sai tên đăng nhập hoặc mật khẩu!", Color.RED);
                 txtPassword.setText("");
@@ -254,6 +342,13 @@ public class LoginForm extends JFrame {
             return;
         }
         
+        // Nếu có callback, sử dụng callback thay vì tự mở giao diện
+        if (loginSuccessCallback != null) {
+            loginSuccessCallback.accept(authService);
+            return;
+        }
+        
+        // Logic mặc định nếu không có callback
         String role = user.getRole().toLowerCase();
         String welcomeMessage = "Chào mừng " + user.getHoTen() + " (" + user.getRole() + ")";
         

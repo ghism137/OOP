@@ -410,4 +410,115 @@ public class MainGUIWithAuth extends JFrame {
     public List<ThiSinh> getDanhSachThiSinh() { return danhSachThiSinh; }
     public List<GiamThi> getDanhSachGiamThi() { return danhSachGiamThi; }
     public AuthenticationService getAuthService() { return authService; }
+    
+    /**
+     * Main method - Entry point chính của ứng dụng
+     * Bắt buộc đăng nhập trước khi truy cập hệ thống quản lý
+     */
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            try {
+                // Set Look and Feel
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            // Hiển thị màn hình chào mừng
+            showWelcomeMessage();
+            
+            // Bắt đầu quá trình đăng nhập
+            startLoginProcess();
+        });
+    }
+    
+    /**
+     * Hiển thị màn hình chào mừng
+     */
+    private static void showWelcomeMessage() {
+        String message = "Chào mừng đến với Hệ Thống Quản Lý Kỳ Thi!\n\n" +
+                        "Phiên bản: 2.0\n" +
+                        "Tính năng:\n" +
+                        "• Quản lý Kỳ thi, Thí sinh, Giám thị\n" +
+                        "• Quản lý trạng thái bài thi và nhập điểm\n" +
+                        "• Phân quyền người dùng\n" +
+                        "• Báo cáo và thống kê\n\n" +
+                        "Bạn cần đăng nhập để tiếp tục.";
+        
+        JOptionPane.showMessageDialog(null, message, 
+            "Hệ Thống Quản Lý Kỳ Thi", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    /**
+     * Bắt đầu quá trình đăng nhập
+     */
+    private static void startLoginProcess() {
+        // Tạo LoginForm với callback
+        LoginForm loginForm = new LoginForm(
+            // Callback khi đăng nhập thành công
+            (authService) -> {
+                SwingUtilities.invokeLater(() -> {
+                    User currentUser = authService.getCurrentUser();
+                    
+                    // Hiển thị thông báo chào mừng
+                    JOptionPane.showMessageDialog(null,
+                        "Đăng nhập thành công!\n\n" +
+                        "Chào mừng: " + currentUser.getHoTen() + "\n" +
+                        "Quyền: " + currentUser.getRole() + "\n" +
+                        "Email: " + currentUser.getEmail(),
+                        "Chào mừng", JOptionPane.INFORMATION_MESSAGE);
+                    
+                    try {
+                        // Khởi tạo MainGUIWithAuth
+                        new MainGUIWithAuth(authService);
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null,
+                            "Lỗi khởi tạo hệ thống: " + e.getMessage(),
+                            "Lỗi hệ thống", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                        System.exit(1);
+                    }
+                });
+            },
+            // Callback khi hủy đăng nhập
+            () -> {
+                int choice = JOptionPane.showConfirmDialog(null,
+                    "Bạn đã hủy đăng nhập.\n" +
+                    "Chọn 'Có' để thử lại, 'Không' để thoát.",
+                    "Hủy đăng nhập",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+                
+                if (choice == JOptionPane.YES_OPTION) {
+                    startLoginProcess(); // Thử lại
+                } else {
+                    JOptionPane.showMessageDialog(null,
+                        "Cảm ơn bạn đã sử dụng Hệ Thống Quản Lý Kỳ Thi!",
+                        "Tạm biệt", JOptionPane.INFORMATION_MESSAGE);
+                    System.exit(0);
+                }
+            }
+        );
+        
+        // Thiết lập xử lý đóng cửa sổ
+        loginForm.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        loginForm.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                int confirm = JOptionPane.showConfirmDialog(loginForm,
+                    "Bạn có chắc chắn muốn thoát chương trình?",
+                    "Xác nhận thoát", JOptionPane.YES_NO_OPTION);
+                
+                if (confirm == JOptionPane.YES_OPTION) {
+                    JOptionPane.showMessageDialog(null,
+                        "Cảm ơn bạn đã sử dụng Hệ Thống Quản Lý Kỳ Thi!",
+                        "Tạm biệt", JOptionPane.INFORMATION_MESSAGE);
+                    System.exit(0);
+                }
+            }
+        });
+        
+        loginForm.setVisible(true);
+    }
+    
 }
