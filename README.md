@@ -1,53 +1,120 @@
-# Hệ Thống Quản Lý Kỳ Thi
+# 🎓 Hệ Thống Quản Lý Kỳ Thi
 
-## ✨ **Cập nhật mới nhất**
-**🎉 TẤT CẢ FORMS GUI ĐÃ ĐƯỢC HOÀN THIỆN!**
+Ứng dụng Java Swing quản lý kỳ thi với giao diện hiện đại và hệ thống phân quyền người dùng.
 
-- ✅ **9 Forms chức năng đầy đủ**: Thay thế hoàn toàn các stub forms cũ
-- 🎨 **Giao diện chuyên nghiệp**: Sử dụng Swing với layout đẹp mắt
-- 🔗 **Tích hợp database**: Tất cả forms kết nối XMLDatabase
-- ⚡ **Exception handling**: Xử lý lỗi và validation đầy đủ
-- 📊 **Thống kê trực quan**: Báo cáo chi tiết với charts và tables
+## ✨ Tính Năng Chính
 
-## Mô tả
-Hệ thống quản lý kỳ thi được phát triển bằng Java Swing, hỗ trợ đầy đủ quản lý thông tin thí sinh, giám thị, và kết quả thi với giao diện đồ họa hoàn chỉnh.
+- **🔐 Hệ thống đăng nhập** với phân quyền người dùng (Admin, Giáo vụ, User, Thí sinh)
+- **📋 Quản lý kỳ thi** - Tạo, chỉnh sửa, xóa kỳ thi
+- **👥 Quản lý thí sinh** - Đăng ký, cập nhật thông tin thí sinh
+- **👨‍🏫 Quản lý giám thị** - Phân công giám thị cho từng kỳ thi
+- **📊 Nhập điểm và báo cáo** - Nhập điểm thi, xuất báo cáo
+- **📈 Thống kê và phân tích** - Báo cáo chi tiết theo kỳ thi
+- **💾 Lưu trữ dữ liệu XML** - Tự động lưu và khôi phục dữ liệu
 
-## Tính năng chính
+## 🖥️ Giao Diện
 
-- **🔐 Hệ thống đăng nhập**: Xác thực người dùng với phân quyền theo role
-- **� Quản lý Tài khoản**: Xem thông tin, đổi mật khẩu, đăng ký tài khoản mới
-- **�👥 Quản lý Thí sinh**: Đăng ký, xem thông tin thí sinh với form chuyên nghiệp
-- **📝 Quản lý Kỳ thi**: Tạo kỳ thi, thêm thí sinh và giám thị với phí riêng biệt
-- **👨‍🏫 Quản lý Giám thị**: Phân công giám thị cho các kỳ thi
-- **📊 Quản lý Kết quả**: Nhập điểm và xem kết quả thi với giao diện trực quan
-- **⚡ Quản lý Trạng thái Bài thi**: Theo dõi chi tiết trạng thái từng bài thi (chưa thi → đang thi → đã nộp → chưa chấm → đang chấm → đã chấm)
-- **🔒 Phân quyền nhập điểm**: Admin, Giáo vụ, Giám thị có quyền khác nhau trong việc chấm bài và nhập điểm
-- **📋 Phiếu đăng ký**: Tự động tạo phiếu đăng ký và xác nhận đóng phí
-- **💾 Cơ sở dữ liệu XML**: Lưu trữ dữ liệu persistent trong các file XML
-- **🎨 Giao diện đồ họa**: Các form GUI đầy đủ chức năng với Swing
-- **📈 Thống kê báo cáo**: Thống kê tổng quan và chi tiết theo kỳ thi
-- **🔍 Tìm kiếm và lọc**: Tìm kiếm thông tin nhanh chóng trong các form
+### Giao Diện Đăng Nhập
+- **Thiết kế 2 panel**: Brand/logo bên trái, form đăng nhập bên phải
+- **Gradient background** với thông tin hệ thống
+- **Responsive design** - Tự động điều chỉnh theo kích thước cửa sổ
+- **Kích thước tùy chỉnh** - Có thể thay đổi kích thước bằng cách kéo thả chuột
+- **Preset kích thước phổ biến**: 1024×768, 1280×720, 1366×768, 1600×900, 1920×1080
 
-## Cấu trúc dự án
+### Giao Diện Chính
+- **Menu phân quyền** theo role người dùng
+- **Status bar** hiển thị thông tin người dùng hiện tại
+- **Tự động lưu** dữ liệu khi thay đổi
+
+## 🚀 Cách Chạy Ứng Dụng
+
+### 1. Chạy với Giao Diện Đăng Nhập (Khuyến nghị)
+```bash
+cd QuanLyKyThi_1
+javac -cp src src/QuanLyKyThi/*.java
+java -cp src QuanLyKyThi.LoginForm
 ```
-src/
-├── QuanLyKyThi/
-│   ├── Core Classes/
-│   │   ├── KyThi.java              # Class quản lý kỳ thi
-│   │   ├── ThiSinh.java            # Class quản lý thí sinh
-│   │   ├── GiamThi.java            # Class quản lý giám thị
-│   │   ├── KetQua.java             # Class quản lý kết quả thi
-│   │   ├── PhieuDangKy.java        # Class quản lý phiếu đăng ký
-│   │   └── User.java               # Class quản lý người dùng
-│   ├── Authentication/
-│   │   ├── AuthenticationService.java  # Service xử lý đăng nhập
-│   │   └── LoginForm.java          # Form đăng nhập
-│   ├── Database/
-│   │   └── XMLDatabase.java        # Quản lý cơ sở dữ liệu XML
-│   ├── Exception Handling/
-│   │   └── Exceptions.java         # Tất cả custom exceptions
-│   ├── GUI - Main/
-│   │   ├── MainGUI.java            # Giao diện chính (legacy)
+
+### 2. Chạy Demo Mode (Không cần đăng nhập)
+```bash
+java -cp src demo.Demo
+```
+
+## � Tài Khoản Mặc Định
+
+| Username | Password | Role     | Quyền                          |
+|----------|----------|----------|--------------------------------|
+| admin    | admin    | Admin    | Toàn bộ tính năng              |
+| giaovu   | giaovu   | Giáo vụ  | Quản lý kỳ thi, nhập điểm     |
+| user     | user     | User     | Xem kết quả, đăng ký thi      |
+
+## 🔧 Cách Sử Dụng Tính Năng Kích Thước
+
+### Thay Đổi Kích Thước Bằng Chuột
+- Kéo thả các cạnh/góc cửa sổ để thay đổi kích thước
+- Giao diện tự động điều chỉnh font size và layout
+- Kích thước tối thiểu: 800×500 pixels
+
+### Sử Dụng Preset Kích Thước (Cho Developer)
+```java
+// Tạo LoginForm với kích thước preset
+LoginForm form = LoginForm.createWithSize(LoginForm.SIZE_MEDIUM); // 1280×720
+form.setVisible(true);
+
+// Hoặc kích thước tùy chỉnh
+LoginForm customForm = new LoginForm(1500, 800);
+customForm.setVisible(true);
+```
+
+### Các Preset Có Sẵn
+- `SIZE_SMALL`: 1024×768 (4:3)
+- `SIZE_MEDIUM`: 1280×720 (HD)
+- `SIZE_LARGE`: 1366×768 (Laptop phổ biến)
+- `SIZE_XLARGE`: 1600×900 (Widescreen)
+- `SIZE_FULLHD`: 1920×1080 (Full HD)
+
+## 📁 Cấu Trúc Project
+
+```
+QuanLyKyThi_1/
+├── src/QuanLyKyThi/           # Code chính
+│   ├── LoginForm.java         # Giao diện đăng nhập
+│   ├── MainGUIWithAuth.java   # Giao diện chính có xác thực
+│   ├── MainGUI.java          # Giao diện chính (demo mode)
+│   ├── AuthenticationService.java # Dịch vụ xác thực
+│   ├── User.java             # Model người dùng
+│   ├── KyThi.java            # Model kỳ thi
+│   ├── ThiSinh.java          # Model thí sinh
+│   ├── GiamThi.java          # Model giám thị
+│   └── *Form.java            # Các form quản lý
+├── src/demo/                 # Entry point demo
+├── data/                     # Dữ liệu XML (tự động tạo)
+└── build.xml                 # Build script
+```
+
+## 💡 Lưu Ý
+
+- **Dữ liệu tự động lưu** trong thư mục `data/` dưới dạng XML
+- **Kích thước cửa sổ** được nhớ và khôi phục khi khởi động lại
+- **Phân quyền nghiêm ngặt** - Mỗi role chỉ có quyền truy cập các tính năng tương ứng
+- **Tương thích** với Windows, Mac, Linux
+
+## 🛠️ Yêu Cầu Hệ Thống
+
+- **Java**: JDK 8 trở lên
+- **IDE**: NetBeans, IntelliJ IDEA, Eclipse, hoặc command line
+- **RAM**: 512MB trở lên
+- **Màn hình**: Tối thiểu 800×600, khuyến nghị 1280×720 trở lên
+
+## 📞 Hỗ Trợ
+
+Nếu gặp vấn đề, vui lòng kiểm tra:
+1. Java version: `java -version`
+2. Compile thành công: `javac -cp src src/QuanLyKyThi/*.java`
+3. File dữ liệu XML trong thư mục `data/`
+
+---
+*© 2025 Hệ Thống Quản Lý Kỳ Thi - Phát triển bởi Java Swing*
 │   │   └── MainGUIWithAuth.java    # Giao diện chính với authentication
 │   ├── GUI - Forms (Hoàn thiện)/
 │   │   ├── AddKyThiForm.java       # Form thêm kỳ thi
