@@ -464,13 +464,34 @@ public class LoginForm extends JFrame {
                 // Gọi callback nếu có
                 if (loginSuccessCallback != null) {
                     System.out.println("LoginForm - Sử dụng callback để mở MainGUIWithAuth");
-                    loginSuccessCallback.accept(authService);
+                    
+                    // Đóng LoginForm trước khi mở MainGUIWithAuth
+                    SwingUtilities.invokeLater(() -> {
+                        try {
+                            loginSuccessCallback.accept(authService);
+                            dispose(); // Đóng LoginForm sau khi callback thành công
+                        } catch (Exception ex) {
+                            System.err.println("Lỗi khi thực hiện callback: " + ex.getMessage());
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(LoginForm.this,
+                                "Lỗi khi mở giao diện chính: " + ex.getMessage(),
+                                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        }
+                    });
                 } else {
                     System.out.println("LoginForm - Sử dụng logic mặc định để chuyển hướng");
                     // Chuyển hướng theo role
                     SwingUtilities.invokeLater(() -> {
-                        redirectBasedOnRole(currentUser);
-                        dispose();
+                        try {
+                            redirectBasedOnRole(currentUser);
+                            dispose();
+                        } catch (Exception ex) {
+                            System.err.println("Lỗi khi chuyển hướng: " + ex.getMessage());
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(LoginForm.this,
+                                "Lỗi khi mở giao diện: " + ex.getMessage(),
+                                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        }
                     });
                 }
             } else {
@@ -516,14 +537,34 @@ public class LoginForm extends JFrame {
                 // Admin: Có quyền cao nhất, vào MainGUIWithAuth
                 JOptionPane.showMessageDialog(null, welcomeMessage + "\nTruy cập với quyền Quản trị viên", 
                                             "Đăng nhập thành công", JOptionPane.INFORMATION_MESSAGE);
-                new MainGUIWithAuth(authService);
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        MainGUIWithAuth mainGUI = new MainGUIWithAuth(authService);
+                        mainGUI.setVisible(true);
+                        System.out.println("LoginForm - MainGUIWithAuth đã được mở cho Admin");
+                    } catch (Exception e) {
+                        System.err.println("Lỗi khi mở MainGUIWithAuth cho Admin: " + e.getMessage());
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Lỗi khi mở giao diện: " + e.getMessage());
+                    }
+                });
                 break;
                 
             case "giaovu":
                 // Giáo vụ: Quản lý kỳ thi, nhập điểm, thống kê
                 JOptionPane.showMessageDialog(null, welcomeMessage + "\nTruy cập với quyền Giáo vụ", 
                                             "Đăng nhập thành công", JOptionPane.INFORMATION_MESSAGE);
-                new MainGUIWithAuth(authService);
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        MainGUIWithAuth mainGUI = new MainGUIWithAuth(authService);
+                        mainGUI.setVisible(true);
+                        System.out.println("LoginForm - MainGUIWithAuth đã được mở cho Giáo vụ");
+                    } catch (Exception e) {
+                        System.err.println("Lỗi khi mở MainGUIWithAuth cho Giáo vụ: " + e.getMessage());
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Lỗi khi mở giao diện: " + e.getMessage());
+                    }
+                });
                 break;
                 
             case "user":

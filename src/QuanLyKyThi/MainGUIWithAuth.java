@@ -44,18 +44,35 @@ public class MainGUIWithAuth extends JFrame {
      * Constructor với kích thước tùy chỉnh
      */
     public MainGUIWithAuth(AuthenticationService authService, int width, int height) {
-        this.authService = authService;
-        this.database = new XMLDatabase();
-        
-        // Khởi tạo UI với kích thước tùy chỉnh
-        initComponentsWithSize(width, height);
-        setupLayout();
-        updateUIForUserRole();
-        
-        // Sau đó load dữ liệu (có thể gọi saveDataToXML)
-        loadDataFromXML();
-        
-        setVisible(true);
+        try {
+            this.authService = authService;
+            this.database = new XMLDatabase();
+            
+            System.out.println("MainGUIWithAuth - Bắt đầu khởi tạo giao diện...");
+            
+            // Khởi tạo UI với kích thước tùy chỉnh
+            initComponentsWithSize(width, height);
+            setupLayout();
+            updateUIForUserRole();
+            
+            // Sau đó load dữ liệu (có thể gọi saveDataToXML)
+            loadDataFromXML();
+            
+            System.out.println("MainGUIWithAuth - Khởi tạo thành công, hiển thị giao diện...");
+            
+            // Đảm bảo giao diện được hiển thị
+            setVisible(true);
+            toFront();
+            requestFocus();
+            
+        } catch (Exception e) {
+            System.err.println("Lỗi khi khởi tạo MainGUIWithAuth: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, 
+                "Lỗi khi khởi tạo giao diện chính: " + e.getMessage(), 
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+            throw e; // Re-throw để caller biết có lỗi
+        }
     }
     
     /**
@@ -326,35 +343,44 @@ public class MainGUIWithAuth extends JFrame {
     }
     
     private void setupEventHandlers(JMenuItem... items) {
-        // Kỳ thi
-        items[0].addActionListener(e -> openKyThiListForm());
-        items[1].addActionListener(e -> openAddKyThiForm());
-        
-        // Thí sinh  
-        items[2].addActionListener(e -> openThiSinhListForm());
-        items[3].addActionListener(e -> openAddThiSinhForm());
-        items[4].addActionListener(e -> openDangKyThiForm());
-        
-        // Giám thị
-        items[5].addActionListener(e -> openGiamThiListForm());
-        items[6].addActionListener(e -> openAddGiamThiForm());
-        items[7].addActionListener(e -> openPhanCongForm());
-        
-        // Kết quả
-        items[8].addActionListener(e -> openQuanLyTrangThaiBaiThiForm());
-        items[9].addActionListener(e -> openNhapDiemForm());
-        items[10].addActionListener(e -> openXemKetQuaForm());
-        items[11].addActionListener(e -> openThongKeForm());
-        
-        // System
-        items[12].addActionListener(e -> showUserProfile());
-        items[13].addActionListener(e -> showChangePasswordDialog());
-        items[14].addActionListener(e -> openUserManagementForm());
-        items[15].addActionListener(e -> openRegisterForm());
-        items[16].addActionListener(e -> saveDataToXML());
-        items[17].addActionListener(e -> loadDataFromXML());
-        items[18].addActionListener(e -> handleLogout());
-        items[19].addActionListener(e -> handleExit());
+        try {
+            // Đảm bảo có đủ items để tránh IndexOutOfBoundsException
+            if (items.length < 15) {
+                System.err.println("setupEventHandlers - Không đủ menu items: " + items.length);
+                return;
+            }
+            
+            // Kỳ thi
+            items[0].addActionListener(e -> openKyThiListForm());
+            items[1].addActionListener(e -> openAddKyThiForm());
+            
+            // Thí sinh  
+            items[2].addActionListener(e -> openThiSinhListForm());
+            items[3].addActionListener(e -> openAddThiSinhForm());
+            items[4].addActionListener(e -> openDangKyThiForm());
+            
+            // Giám thị
+            items[5].addActionListener(e -> openGiamThiListForm());
+            items[6].addActionListener(e -> openAddGiamThiForm());
+            items[7].addActionListener(e -> openPhanCongForm());
+            
+            // Kết quả
+            items[8].addActionListener(e -> openQuanLyTrangThaiBaiThiForm());
+            items[9].addActionListener(e -> openNhapDiemForm());
+            items[10].addActionListener(e -> openXemKetQuaForm());
+            items[11].addActionListener(e -> openThongKeForm());
+            
+            // System (chỉ có 3 items: Profile, Logout, Exit)
+            items[12].addActionListener(e -> showUserProfile());
+            items[13].addActionListener(e -> handleLogout());
+            items[14].addActionListener(e -> handleExit());
+            
+            System.out.println("setupEventHandlers - Đã thiết lập " + items.length + " event handlers");
+            
+        } catch (Exception e) {
+            System.err.println("Lỗi trong setupEventHandlers: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     // Methods để mở các form (giống MainGUI cũ)
@@ -602,12 +628,20 @@ public class MainGUIWithAuth extends JFrame {
                     
                     try {
                         // Khởi tạo MainGUIWithAuth
-                        new MainGUIWithAuth(authService);
+                        System.out.println("startLoginProcess - Bắt đầu tạo MainGUIWithAuth...");
+                        MainGUIWithAuth mainGUI = new MainGUIWithAuth(authService);
+                        System.out.println("startLoginProcess - MainGUIWithAuth đã được tạo và hiển thị thành công");
+                        
+                        // Đảm bảo cửa sổ được đưa lên trên cùng
+                        mainGUI.toFront();
+                        mainGUI.requestFocus();
+                        
                     } catch (Exception e) {
+                        System.err.println("startLoginProcess - Lỗi khởi tạo MainGUIWithAuth: " + e.getMessage());
+                        e.printStackTrace();
                         JOptionPane.showMessageDialog(null,
                             "Lỗi khởi tạo hệ thống: " + e.getMessage(),
                             "Lỗi hệ thống", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
                         System.exit(1);
                     }
                 });
