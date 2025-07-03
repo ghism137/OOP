@@ -25,6 +25,9 @@
 - **Menu phân quyền** theo role người dùng
 - **Status bar** hiển thị thông tin người dùng hiện tại
 - **Tự động lưu** dữ liệu khi thay đổi
+- **Kéo thả để resize** - Thay đổi kích thước cửa sổ chính bằng chuột
+- **Responsive design** - Menu và status bar tự động điều chỉnh font size
+- **Desktop pane** co giãn theo kích thước cửa sổ
 
 ## 🚀 Cách Chạy Ứng Dụng
 
@@ -51,26 +54,37 @@ java -cp src demo.Demo
 ## 🔧 Cách Sử Dụng Tính Năng Kích Thước
 
 ### Thay Đổi Kích Thước Bằng Chuột
-- Kéo thả các cạnh/góc cửa sổ để thay đổi kích thước
-- Giao diện tự động điều chỉnh font size và layout
-- Kích thước tối thiểu: 800×500 pixels
+- **LoginForm**: Kéo thả các cạnh/góc cửa sổ để thay đổi kích thước
+- **MainGUI/MainGUIWithAuth**: Kéo thả để resize giao diện chính
+- **Responsive design**: Giao diện tự động điều chỉnh font size và layout
+- **Kích thước tối thiểu**: LoginForm (800×500), MainGUI (1000×600)
 
 ### Sử Dụng Preset Kích Thước (Cho Developer)
 ```java
-// Tạo LoginForm với kích thước preset
+// LoginForm với kích thước preset
 LoginForm form = LoginForm.createWithSize(LoginForm.SIZE_MEDIUM); // 1280×720
 form.setVisible(true);
 
-// Hoặc kích thước tùy chỉnh
-LoginForm customForm = new LoginForm(1500, 800);
-customForm.setVisible(true);
+// MainGUI với kích thước tùy chỉnh
+MainGUI mainGui = new MainGUI(1500, 800);
+
+// MainGUIWithAuth với preset
+MainGUIWithAuth authGui = MainGUIWithAuth.createWithSize(authService, MainGUIWithAuth.SIZE_LARGE);
 ```
 
 ### Các Preset Có Sẵn
+**LoginForm:**
 - `SIZE_SMALL`: 1024×768 (4:3)
-- `SIZE_MEDIUM`: 1280×720 (HD)
+- `SIZE_MEDIUM`: 1280×720 (HD) - Mặc định
 - `SIZE_LARGE`: 1366×768 (Laptop phổ biến)
 - `SIZE_XLARGE`: 1600×900 (Widescreen)
+- `SIZE_FULLHD`: 1920×1080 (Full HD)
+
+**MainGUI & MainGUIWithAuth:**
+- `SIZE_SMALL`: 1200×700 (Nhỏ)
+- `SIZE_MEDIUM`: 1400×800 (Trung bình) - Mặc định
+- `SIZE_LARGE`: 1600×900 (Lớn)
+- `SIZE_XLARGE`: 1800×1000 (Rất lớn)
 - `SIZE_FULLHD`: 1920×1080 (Full HD)
 
 ## 📁 Cấu Trúc Project

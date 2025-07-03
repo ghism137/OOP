@@ -24,12 +24,31 @@ public class MainGUIWithAuth extends JFrame {
     private JDesktopPane desktopPane;
     private JLabel statusLabel;
     
+    /**
+     * Các preset kích thước phổ biến cho MainGUI
+     */
+    public static final int[] SIZE_SMALL = {1200, 700};      // Nhỏ
+    public static final int[] SIZE_MEDIUM = {1400, 800};     // Trung bình - Mặc định
+    public static final int[] SIZE_LARGE = {1600, 900};      // Lớn
+    public static final int[] SIZE_XLARGE = {1800, 1000};    // Rất lớn
+    public static final int[] SIZE_FULLHD = {1920, 1080};    // Full HD
+    
+    /**
+     * Constructor mặc định với kích thước trung bình
+     */
     public MainGUIWithAuth(AuthenticationService authService) {
+        this(authService, SIZE_MEDIUM[0], SIZE_MEDIUM[1]);
+    }
+    
+    /**
+     * Constructor với kích thước tùy chỉnh
+     */
+    public MainGUIWithAuth(AuthenticationService authService, int width, int height) {
         this.authService = authService;
         this.database = new XMLDatabase();
         
-        // Khởi tạo UI trước
-        initComponents();
+        // Khởi tạo UI với kích thước tùy chỉnh
+        initComponentsWithSize(width, height);
         setupLayout();
         updateUIForUserRole();
         
@@ -37,6 +56,13 @@ public class MainGUIWithAuth extends JFrame {
         loadDataFromXML();
         
         setVisible(true);
+    }
+    
+    /**
+     * Tạo MainGUIWithAuth với preset kích thước
+     */
+    public static MainGUIWithAuth createWithSize(AuthenticationService authService, int[] sizePreset) {
+        return new MainGUIWithAuth(authService, sizePreset[0], sizePreset[1]);
     }
     
     private void loadDataFromXML() {
@@ -121,12 +147,33 @@ public class MainGUIWithAuth extends JFrame {
             }
         }
     }
-
-    private void initComponents() {
+    
+    /**
+     * Khởi tạo components với kích thước tùy chỉnh
+     */
+    private void initComponentsWithSize(int width, int height) {
         User currentUser = authService.getCurrentUser();
         setTitle("Hệ Thống Quản Lý Kỳ Thi - " + currentUser.getHoTen() + " (" + currentUser.getRole() + ")");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
+        // Sử dụng kích thước tùy chỉnh
+        setSize(width, height);
+        setLocationRelativeTo(null);
+        setResizable(true); // Cho phép thay đổi kích thước bằng cách kéo thả chuột
+        
+        // Set kích thước tối thiểu để tránh giao diện bị vỡ
+        setMinimumSize(new Dimension(1000, 600));
+        
+        // Thêm ComponentListener để xử lý khi người dùng thay đổi kích thước
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                handleWindowResize();
+            }
+        });
+        
+        // Thêm thông báo về tính năng resize
+        System.out.println("MainGUIWithAuth - Có thể kéo thả để thay đổi kích thước. Kích thước hiện tại: " + width + "×" + height);
         
         // Window closing event
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -136,40 +183,76 @@ public class MainGUIWithAuth extends JFrame {
             }
         });
         
-        // Tạo menu bar
+        // Tạo menu bar với font size responsive
+        setupMenuBarWithSize(width, height);
+        
+        // Tạo desktop pane
+        desktopPane = new JDesktopPane();
+        desktopPane.setBackground(new Color(240, 240, 240));
+        
+        // Tính toán kích thước desktop pane
+        int desktopWidth = Math.max(800, width - 100);
+        int desktopHeight = Math.max(500, height - 150);
+        desktopPane.setPreferredSize(new Dimension(desktopWidth, desktopHeight));
+    }
+    
+    /**
+     * Setup menu bar với kích thước responsive
+     */
+    private void setupMenuBarWithSize(int width, int height) {
+        // Tính toán font size dựa trên kích thước
+        int menuFontSize = Math.max(12, width / 120);
+        int itemFontSize = Math.max(10, width / 140);
+        
         menuBar = new JMenuBar();
         
         // Menu Kỳ Thi
         menuKyThi = new JMenu("Kỳ Thi");
+        menuKyThi.setFont(new Font("Arial", Font.PLAIN, menuFontSize));
         JMenuItem itemDSKyThi = new JMenuItem("Danh Sách Kỳ Thi");
+        itemDSKyThi.setFont(new Font("Arial", Font.PLAIN, itemFontSize));
         JMenuItem itemThemKyThi = new JMenuItem("Thêm Kỳ Thi");
+        itemThemKyThi.setFont(new Font("Arial", Font.PLAIN, itemFontSize));
         menuKyThi.add(itemDSKyThi);
         menuKyThi.add(itemThemKyThi);
         
         // Menu Thí Sinh
         menuThiSinh = new JMenu("Thí Sinh");
+        menuThiSinh.setFont(new Font("Arial", Font.PLAIN, menuFontSize));
         JMenuItem itemDSThiSinh = new JMenuItem("Danh Sách Thí Sinh");
+        itemDSThiSinh.setFont(new Font("Arial", Font.PLAIN, itemFontSize));
         JMenuItem itemThemThiSinh = new JMenuItem("Thêm Thí Sinh");
+        itemThemThiSinh.setFont(new Font("Arial", Font.PLAIN, itemFontSize));
         JMenuItem itemDangKyThi = new JMenuItem("Đăng Ký Thi");
+        itemDangKyThi.setFont(new Font("Arial", Font.PLAIN, itemFontSize));
         menuThiSinh.add(itemDSThiSinh);
         menuThiSinh.add(itemThemThiSinh);
         menuThiSinh.add(itemDangKyThi);
         
         // Menu Giám Thị
         menuGiamThi = new JMenu("Giám Thị");
+        menuGiamThi.setFont(new Font("Arial", Font.PLAIN, menuFontSize));
         JMenuItem itemDSGiamThi = new JMenuItem("Danh Sách Giám Thị");
+        itemDSGiamThi.setFont(new Font("Arial", Font.PLAIN, itemFontSize));
         JMenuItem itemThemGiamThi = new JMenuItem("Thêm Giám Thị");
+        itemThemGiamThi.setFont(new Font("Arial", Font.PLAIN, itemFontSize));
         JMenuItem itemPhanCong = new JMenuItem("Phân Công Giám Thị");
+        itemPhanCong.setFont(new Font("Arial", Font.PLAIN, itemFontSize));
         menuGiamThi.add(itemDSGiamThi);
         menuGiamThi.add(itemThemGiamThi);
         menuGiamThi.add(itemPhanCong);
         
         // Menu Kết Quả
         menuKetQua = new JMenu("Kết Quả");
+        menuKetQua.setFont(new Font("Arial", Font.PLAIN, menuFontSize));
         JMenuItem itemQuanLyTrangThai = new JMenuItem("Quản Lý Trạng Thái Bài Thi");
+        itemQuanLyTrangThai.setFont(new Font("Arial", Font.PLAIN, itemFontSize));
         JMenuItem itemNhapDiem = new JMenuItem("Nhập Điểm");
+        itemNhapDiem.setFont(new Font("Arial", Font.PLAIN, itemFontSize));
         JMenuItem itemXemKetQua = new JMenuItem("Xem Kết Quả");
+        itemXemKetQua.setFont(new Font("Arial", Font.PLAIN, itemFontSize));
         JMenuItem itemThongKe = new JMenuItem("Thống Kê");
+        itemThongKe.setFont(new Font("Arial", Font.PLAIN, itemFontSize));
         menuKetQua.add(itemQuanLyTrangThai);
         menuKetQua.add(itemNhapDiem);
         menuKetQua.add(itemXemKetQua);
@@ -177,33 +260,19 @@ public class MainGUIWithAuth extends JFrame {
         
         // Menu System
         menuSystem = new JMenu("Hệ Thống");
+        menuSystem.setFont(new Font("Arial", Font.PLAIN, menuFontSize));
         JMenuItem itemProfile = new JMenuItem("Thông Tin Tài Khoản");
-        JMenuItem itemChangePassword = new JMenuItem("Đổi Mật Khẩu");
-        JMenuItem itemUserManagement = new JMenuItem("Quản Lý Tài Khoản");
-        JMenuItem itemRegister = new JMenuItem("Đăng Ký Tài Khoản Mới");
-        JMenuItem itemSaveData = new JMenuItem("Lưu Dữ Liệu");
-        JMenuItem itemLoadData = new JMenuItem("Tải Lại Dữ Liệu");
+        itemProfile.setFont(new Font("Arial", Font.PLAIN, itemFontSize));
         JMenuItem itemLogout = new JMenuItem("Đăng Xuất");
+        itemLogout.setFont(new Font("Arial", Font.PLAIN, itemFontSize));
         JMenuItem itemExit = new JMenuItem("Thoát");
-        
+        itemExit.setFont(new Font("Arial", Font.PLAIN, itemFontSize));
         menuSystem.add(itemProfile);
-        menuSystem.add(itemChangePassword);
-        menuSystem.addSeparator();
-        
-        // Chỉ admin mới có quyền quản lý tài khoản
-        if (authService.isAdmin()) {
-            menuSystem.add(itemUserManagement);
-            menuSystem.add(itemRegister);
-            menuSystem.addSeparator();
-        }
-        
-        menuSystem.add(itemSaveData);
-        menuSystem.add(itemLoadData);
         menuSystem.addSeparator();
         menuSystem.add(itemLogout);
         menuSystem.add(itemExit);
         
-        // Thêm menu vào menu bar
+        // Thêm menus vào menubar
         menuBar.add(menuKyThi);
         menuBar.add(menuThiSinh);
         menuBar.add(menuGiamThi);
@@ -212,16 +281,11 @@ public class MainGUIWithAuth extends JFrame {
         
         setJMenuBar(menuBar);
         
-        // Desktop pane cho MDI
-        desktopPane = new JDesktopPane();
-        desktopPane.setBackground(new Color(240, 240, 240));
-        
-        // Event handlers
+        // Setup event handlers
         setupEventHandlers(itemDSKyThi, itemThemKyThi, itemDSThiSinh, itemThemThiSinh, 
                           itemDangKyThi, itemDSGiamThi, itemThemGiamThi, itemPhanCong,
                           itemQuanLyTrangThai, itemNhapDiem, itemXemKetQua, itemThongKe,
-                          itemProfile, itemChangePassword, itemUserManagement, itemRegister,
-                          itemSaveData, itemLoadData, itemLogout, itemExit);
+                          itemProfile, itemLogout, itemExit);
     }
     
     private void setupLayout() {
@@ -587,6 +651,86 @@ public class MainGUIWithAuth extends JFrame {
         });
         
         loginForm.setVisible(true);
+    }
+    
+    /**
+     * Xử lý khi người dùng thay đổi kích thước cửa sổ bằng cách kéo thả chuột
+     */
+    private void handleWindowResize() {
+        SwingUtilities.invokeLater(() -> {
+            try {
+                Dimension currentSize = getSize();
+                int newWidth = currentSize.width;
+                int newHeight = currentSize.height;
+                
+                // Debug thông tin
+                System.out.println("MainGUIWithAuth - Kích thước mới: " + newWidth + "x" + newHeight);
+                
+                // Cập nhật font size cho menu và status bar
+                updateUIComponentSizes(newWidth, newHeight);
+                
+                // Refresh giao diện
+                revalidate();
+                repaint();
+                
+            } catch (Exception e) {
+                System.err.println("Lỗi khi thay đổi kích thước MainGUI: " + e.getMessage());
+            }
+        });
+    }
+    
+    /**
+     * Cập nhật kích thước UI components khi cửa sổ thay đổi kích thước
+     */
+    private void updateUIComponentSizes(int windowWidth, int windowHeight) {
+        // Tính toán font size mới dựa trên kích thước cửa sổ
+        int menuFontSize = Math.max(12, windowWidth / 120);
+        int statusFontSize = Math.max(11, windowWidth / 130);
+        
+        // Cập nhật font cho menu bar
+        updateMenuFontSize(menuBar, menuFontSize);
+        
+        // Cập nhật font cho status bar
+        if (statusLabel != null) {
+            statusLabel.setFont(new Font("Arial", Font.PLAIN, statusFontSize));
+        }
+        
+        // Cập nhật kích thước tối thiểu cho desktop pane nếu cần
+        if (desktopPane != null) {
+            int minDesktopWidth = Math.max(800, windowWidth - 100);
+            int minDesktopHeight = Math.max(500, windowHeight - 150);
+            desktopPane.setPreferredSize(new Dimension(minDesktopWidth, minDesktopHeight));
+        }
+    }
+    
+    /**
+     * Cập nhật font size cho menu bar một cách đệ quy
+     */
+    private void updateMenuFontSize(JMenuBar menuBar, int fontSize) {
+        if (menuBar == null) return;
+        
+        for (int i = 0; i < menuBar.getMenuCount(); i++) {
+            JMenu menu = menuBar.getMenu(i);
+            if (menu != null) {
+                // Cập nhật font cho menu chính
+                menu.setFont(new Font("Arial", Font.PLAIN, fontSize));
+                
+                // Cập nhật font cho các menu item
+                updateMenuItemFontSize(menu, fontSize - 1);
+            }
+        }
+    }
+    
+    /**
+     * Cập nhật font size cho menu items
+     */
+    private void updateMenuItemFontSize(JMenu menu, int fontSize) {
+        for (int i = 0; i < menu.getItemCount(); i++) {
+            JMenuItem item = menu.getItem(i);
+            if (item != null) {
+                item.setFont(new Font("Arial", Font.PLAIN, Math.max(10, fontSize)));
+            }
+        }
     }
     
 }
