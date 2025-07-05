@@ -1,4 +1,4 @@
-# Nhật ký thay đổi dự án FeersuProject
+# Nhật ký thay đổi dự án
 
 ## Ngày: 05/07/2025
 
