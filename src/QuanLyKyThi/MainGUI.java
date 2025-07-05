@@ -2,7 +2,6 @@ package QuanLyKyThi;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +16,6 @@ public class MainGUI extends JFrame {
     private List<ThiSinh> danhSachThiSinh;
     private List<GiamThi> danhSachGiamThi;
     private XMLDatabase database;
-    private AuthenticationService authService;
     
     // Components
     private JMenuBar menuBar;
@@ -58,39 +56,45 @@ public class MainGUI extends JFrame {
     }
     
     private void initData() {
+        // Khởi tạo danh sách rỗng - dữ liệu sẽ được load từ XML database hoặc nhập thực tế
         danhSachKyThi = new ArrayList<>();
         danhSachThiSinh = new ArrayList<>();
         danhSachGiamThi = new ArrayList<>();
         
-        // Tạo dữ liệu mẫu
-        createSampleData();
+        // Khởi tạo XML database cho việc load/save nếu cần
+        database = new XMLDatabase();
+        
+        System.out.println("MainGUI - Khởi tạo dữ liệu trống, sẵn sàng load từ XML hoặc nhập mới");
+        
+        // Tùy chọn: Có thể load dữ liệu từ XML nếu file tồn tại
+        tryLoadExistingData();
     }
     
-    private void createSampleData() {
-        // Tạo kỳ thi mẫu với phí đăng ký
-        KyThi kyThi1 = new KyThi("KT001", "Kỳ thi Java OOP", LocalDate.of(2025, 8, 15), 
-                                "Sắp diễn ra", new ArrayList<>(), new ArrayList<>(), 150.0);
-        KyThi kyThi2 = new KyThi("KT002", "Kỳ thi Web Development", LocalDate.of(2025, 7, 20), 
-                                "Đang diễn ra", new ArrayList<>(), new ArrayList<>(), 200.0);
-        KyThi kyThi3 = new KyThi("KT003", "Kỳ thi Database", LocalDate.of(2025, 6, 10), 
-                                "Đã kết thúc", new ArrayList<>(), new ArrayList<>(), 180.0);
-        
-        danhSachKyThi.add(kyThi1);
-        danhSachKyThi.add(kyThi2);
-        danhSachKyThi.add(kyThi3);
-        
-        // Tạo thí sinh mẫu
-        ThiSinh ts1 = new ThiSinh("TS001", "Nguyễn Văn A", LocalDate.of(2003, 5, 10), 
-                                  "Nam", "Hà Nội", "0123456789");
-        ThiSinh ts2 = new ThiSinh("TS002", "Trần Thị B", LocalDate.of(2003, 8, 20), 
-                                  "Nữ", "Hồ Chí Minh", "0987654321");
-        danhSachThiSinh.add(ts1);
-        danhSachThiSinh.add(ts2);
-        
-        // Tạo giám thị mẫu
-        GiamThi gt1 = new GiamThi("GT001", "Phạm Văn C", "Trường ĐHCN", "0111222333");
-        danhSachGiamThi.add(gt1);
+    /**
+     * Thử load dữ liệu từ XML files nếu tồn tại
+     */
+    private void tryLoadExistingData() {
+        try {
+            List<KyThi> existingKyThi = database.loadKyThi();
+            List<ThiSinh> existingThiSinh = database.loadThiSinh();
+            List<GiamThi> existingGiamThi = database.loadGiamThi();
+            
+            if (!existingKyThi.isEmpty() || !existingThiSinh.isEmpty() || !existingGiamThi.isEmpty()) {
+                danhSachKyThi = existingKyThi;
+                danhSachThiSinh = existingThiSinh;
+                danhSachGiamThi = existingGiamThi;
+                
+                System.out.println("MainGUI - Đã load dữ liệu từ XML:");
+                System.out.println("  - Kỳ thi: " + danhSachKyThi.size());
+                System.out.println("  - Thí sinh: " + danhSachThiSinh.size());
+                System.out.println("  - Giám thị: " + danhSachGiamThi.size());
+            }
+        } catch (Exception e) {
+            System.out.println("MainGUI - Chưa có dữ liệu XML hoặc lỗi load: " + e.getMessage());
+            System.out.println("MainGUI - Sẽ bắt đầu với dữ liệu trống");
+        }
     }
+    
     
     /**
      * Khởi tạo components với kích thước tùy chỉnh
@@ -193,8 +197,15 @@ public class MainGUI extends JFrame {
         // Menu System
         menuSystem = new JMenu("Hệ Thống");
         menuSystem.setFont(new Font("Arial", Font.PLAIN, menuFontSize));
+        JMenuItem itemLuuDuLieu = new JMenuItem("Lưu Dữ Liệu");
+        JMenuItem itemTaiDuLieu = new JMenuItem("Tải Dữ Liệu");
         JMenuItem itemThoat = new JMenuItem("Thoát");
+        itemLuuDuLieu.setFont(new Font("Arial", Font.PLAIN, menuFontSize - 1));
+        itemTaiDuLieu.setFont(new Font("Arial", Font.PLAIN, menuFontSize - 1));
         itemThoat.setFont(new Font("Arial", Font.PLAIN, menuFontSize - 1));
+        menuSystem.add(itemLuuDuLieu);
+        menuSystem.add(itemTaiDuLieu);
+        menuSystem.addSeparator();
         menuSystem.add(itemThoat);
         
         // Thêm menu vào menu bar
@@ -210,12 +221,8 @@ public class MainGUI extends JFrame {
         // Setup event handlers
         setupEventHandlers(itemDSKyThi, itemThemKyThi, itemDSThiSinh, itemThemThiSinh, 
                           itemDangKyThi, itemDSGiamThi, itemThemGiamThi, itemPhanCong,
-                          itemNhapDiem, itemXemKetQua, itemThongKe, itemThoat);
-    }
-    
-    private void initComponents() {
-        // Legacy method - chuyển sang sử dụng initComponentsWithSize với kích thước mặc định
-        initComponentsWithSize(SIZE_MEDIUM[0], SIZE_MEDIUM[1]);
+                          itemNhapDiem, itemXemKetQua, itemThongKe, 
+                          itemLuuDuLieu, itemTaiDuLieu, itemThoat);
     }
     
     private void setupLayout() {
@@ -264,8 +271,14 @@ public class MainGUI extends JFrame {
         // Thống kê
         items[10].addActionListener(e -> openThongKeForm());
         
+        // Lưu dữ liệu
+        items[11].addActionListener(e -> saveDataToXML());
+        
+        // Tải dữ liệu
+        items[12].addActionListener(e -> loadDataFromXML());
+        
         // Thoát
-        items[11].addActionListener(e -> System.exit(0));
+        items[13].addActionListener(e -> System.exit(0));
     }
     
     // Methods để mở các form
@@ -345,6 +358,68 @@ public class MainGUI extends JFrame {
         }
     }
     
+    /**
+     * Lưu dữ liệu vào XML files
+     */
+    private void saveDataToXML() {
+        try {
+            if (database != null) {
+                database.saveKyThi(danhSachKyThi);
+                database.saveThiSinh(danhSachThiSinh);
+                database.saveGiamThi(danhSachGiamThi);
+                
+                JOptionPane.showMessageDialog(this, 
+                    "Lưu dữ liệu thành công!\n" +
+                    "- Kỳ thi: " + danhSachKyThi.size() + "\n" +
+                    "- Thí sinh: " + danhSachThiSinh.size() + "\n" +
+                    "- Giám thị: " + danhSachGiamThi.size(),
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                
+                System.out.println("MainGUI - Đã lưu dữ liệu vào XML files");
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lưu dữ liệu: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, 
+                "Lỗi khi lưu dữ liệu: " + e.getMessage(),
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    /**
+     * Tải dữ liệu từ XML files
+     */
+    private void loadDataFromXML() {
+        try {
+            if (database != null) {
+                int choice = JOptionPane.showConfirmDialog(this,
+                    "Tải dữ liệu từ XML sẽ ghi đè dữ liệu hiện tại.\nBạn có chắc chắn?",
+                    "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                
+                if (choice == JOptionPane.YES_OPTION) {
+                    danhSachKyThi = database.loadKyThi();
+                    danhSachThiSinh = database.loadThiSinh();
+                    danhSachGiamThi = database.loadGiamThi();
+                    
+                    JOptionPane.showMessageDialog(this, 
+                        "Tải dữ liệu thành công!\n" +
+                        "- Kỳ thi: " + danhSachKyThi.size() + "\n" +
+                        "- Thí sinh: " + danhSachThiSinh.size() + "\n" +
+                        "- Giám thị: " + danhSachGiamThi.size(),
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    
+                    System.out.println("MainGUI - Đã tải dữ liệu từ XML files");
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tải dữ liệu: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, 
+                "Lỗi khi tải dữ liệu: " + e.getMessage(),
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     // Getter methods cho các danh sách
     public List<KyThi> getDanhSachKyThi() { return danhSachKyThi; }
     public List<ThiSinh> getDanhSachThiSinh() { return danhSachThiSinh; }
