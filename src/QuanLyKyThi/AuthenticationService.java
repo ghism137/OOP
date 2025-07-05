@@ -23,7 +23,7 @@ public class AuthenticationService {
         
         for (User user : users) {
             if (user.getUsername().equals(username) && 
-                user.getPassword().equals(password) && 
+                PasswordUtil.verifyPassword(password, user.getPassword()) && 
                 user.isActive()) {
                 
                 // Cập nhật thời gian đăng nhập cuối
@@ -114,18 +114,19 @@ public class AuthenticationService {
     public boolean changePassword(String oldPassword, String newPassword) {
         if (currentUser == null) return false;
         
-        if (!currentUser.getPassword().equals(oldPassword)) {
+        if (!PasswordUtil.verifyPassword(oldPassword, currentUser.getPassword())) {
             System.out.println("❌ Mật khẩu cũ không chính xác");
             return false;
         }
         
-        currentUser.setPassword(newPassword);
+        String hashedNewPassword = PasswordUtil.hashPassword(newPassword);
+        currentUser.setPassword(hashedNewPassword);
         
         // Cập nhật vào database
         List<User> users = database.loadUsers();
         for (User user : users) {
             if (user.getUsername().equals(currentUser.getUsername())) {
-                user.setPassword(newPassword);
+                user.setPassword(hashedNewPassword);
                 break;
             }
         }
@@ -159,7 +160,7 @@ public class AuthenticationService {
             }
             
             // Tạo user mới
-            User newUser = new User(username, password, hoTen, email, role);
+            User newUser = new User(username, PasswordUtil.hashPassword(password), hoTen, email, role);
             
             // Nếu role là admin thì cần duyệt, các role khác được active luôn
             if ("admin".equals(role)) {
@@ -247,15 +248,5 @@ public class AuthenticationService {
         return false;
     }
     
-    /**
-     * Lấy danh sách tất cả users (chỉ admin)
-     */
-    public List<User> getAllUsers() {
-        if (!isAdmin()) {
-            System.out.println("❌ Chỉ admin mới có quyền xem danh sách user");
-            return null;
-        }
-        
-        return database.loadUsers();
-    }
+    
 }

@@ -161,19 +161,9 @@ public class RegisterForm extends JFrame {
     }
     
     private void setupEventHandlers() {
-        btnRegister.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                registerUser();
-            }
-        });
+        btnRegister.addActionListener(e -> registerUser());
         
-        btnCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        btnCancel.addActionListener(e -> dispose());
         
         // Enter key để submit
         getRootPane().setDefaultButton(btnRegister);
@@ -249,7 +239,7 @@ public class RegisterForm extends JFrame {
             User newUser = new User(username, hashPassword(password), hoTen, email, role);
             
             // Add user to database
-            java.util.List<User> users = database.getAllUsers();
+            java.util.List<User> users = database.loadUsers();
             users.add(newUser);
             database.saveUsers(users);
             

@@ -105,7 +105,7 @@ public class PhanCongGiamThiForm extends JInternalFrame {
         // Load kỳ thi
         cmbKyThi.removeAllItems();
         try {
-            List<KyThi> allKyThi = database.getAllKyThi();
+            List<KyThi> allKyThi = database.loadKyThi();
             for (KyThi kt : allKyThi) {
                 cmbKyThi.addItem(kt);
             }
@@ -117,12 +117,12 @@ public class PhanCongGiamThiForm extends JInternalFrame {
         // Load giám thị
         tableModel.setRowCount(0);
         try {
-            List<GiamThi> allGiamThi = database.getAllGiamThi();
+            List<GiamThi> allGiamThi = database.loadGiamThi();
             KyThi selectedKyThi = (KyThi) cmbKyThi.getSelectedItem();
             
             for (GiamThi gt : allGiamThi) {
                 String trangThai = "Chưa phân công";
-                if (selectedKyThi != null && selectedKyThi.getDanhSachGiamThi().contains(gt)) {
+                if (selectedKyThi != null && selectedKyThi.getDanhSachGiamThi().stream().anyMatch(g -> g.getMaGiamThi().equals(gt.getMaGiamThi()))) {
                     trangThai = "Đã phân công";
                 }
                 
@@ -158,17 +158,17 @@ public class PhanCongGiamThiForm extends JInternalFrame {
         String maGiamThi = (String) tableModel.getValueAt(selectedRow, 0);
         
         try {
-            List<GiamThi> allGiamThi = database.getAllGiamThi();
+            List<GiamThi> allGiamThi = database.loadGiamThi();
             GiamThi giamThi = allGiamThi.stream()
                 .filter(gt -> gt.getMaGiamThi().equals(maGiamThi))
                 .findFirst()
                 .orElse(null);
                 
             if (giamThi != null) {
-                boolean success = giamThi.phanCong(selectedKyThi);
+                boolean success = selectedKyThi.themGiamThi(giamThi);
                 
                 if (success) {
-                    List<KyThi> allKyThi = database.getAllKyThi();
+                    List<KyThi> allKyThi = database.loadKyThi();
                     database.saveKyThi(allKyThi);
                     
                     JOptionPane.showMessageDialog(this, "Phân công thành công!");
@@ -184,7 +184,47 @@ public class PhanCongGiamThiForm extends JInternalFrame {
     }
     
     private void huyPhanCong() {
-        JOptionPane.showMessageDialog(this, 
-            "Chức năng hủy phân công đang được phát triển!");
+        KyThi selectedKyThi = (KyThi) cmbKyThi.getSelectedItem();
+        int selectedRow = tableGiamThi.getSelectedRow();
+        
+        if (selectedKyThi == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn kỳ thi!");
+            return;
+        }
+        
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn giám thị cần hủy phân công!");
+            return;
+        }
+        
+        String maGiamThi = (String) tableModel.getValueAt(selectedRow, 0);
+        
+        int confirm = JOptionPane.showConfirmDialog(this, 
+            "Bạn có chắc chắn muốn hủy phân công giám thị " + maGiamThi + " khỏi kỳ thi " + selectedKyThi.getTenKyThi() + "?", 
+            "Xác nhận hủy phân công", JOptionPane.YES_NO_OPTION);
+            
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                List<KyThi> allKyThi = database.loadKyThi();
+                KyThi kyThiToUpdate = allKyThi.stream()
+                    .filter(kt -> kt.getMaKyThi().equals(selectedKyThi.getMaKyThi()))
+                    .findFirst()
+                    .orElse(null);
+                
+                if (kyThiToUpdate != null) {
+                    boolean removed = kyThiToUpdate.getDanhSachGiamThi().removeIf(gt -> gt.getMaGiamThi().equals(maGiamThi));
+                    if (removed) {
+                        database.saveKyThi(allKyThi);
+                        JOptionPane.showMessageDialog(this, "Hủy phân công thành công!");
+                        loadData();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Giám thị chưa được phân công cho kỳ thi này!");
+                    }
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, 
+                    "Lỗi khi hủy phân công: " + e.getMessage());
+            }
+        }
     }
 }

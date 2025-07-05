@@ -143,9 +143,9 @@ public class AddThiSinhForm extends JInternalFrame {
             );
             
             // Check if MaThiSinh already exists
-            List<ThiSinh> existingList = database.getAllThiSinh();
+            List<ThiSinh> existingList = database.loadThiSinh();
             boolean exists = existingList.stream()
-                .anyMatch(ts -> ts.getMaThisinh().equals(newThiSinh.getMaThisinh()));
+                .anyMatch(ts -> ts.getSoBaoDanh().equals(newThiSinh.getSoBaoDanh()));
             
             if (exists) {
                 JOptionPane.showMessageDialog(this, 

@@ -108,7 +108,7 @@ public class NhapDiemForm extends JInternalFrame {
         // Load kỳ thi
         cmbKyThi.removeAllItems();
         try {
-            List<KyThi> allKyThi = database.getAllKyThi();
+            List<KyThi> allKyThi = database.loadKyThi();
             for (KyThi kt : allKyThi) {
                 cmbKyThi.addItem(kt);
             }
@@ -134,7 +134,7 @@ public class NhapDiemForm extends JInternalFrame {
             for (ThiSinh ts : danhSachThiSinh) {
                 // Tìm kết quả tương ứng
                 KetQua ketQua = danhSachKetQua.stream()
-                    .filter(kq -> kq.getThiSinh().equals(ts))
+                    .filter(kq -> kq.getMaThiSinh().equals(ts.getSoBaoDanh()))
                     .findFirst()
                     .orElse(null);
                 
@@ -142,7 +142,7 @@ public class NhapDiemForm extends JInternalFrame {
                 String trangThai = ketQua != null ? "Đã nhập" : "Chưa nhập";
                 
                 Object[] row = {
-                    ts.getMaThisinh(),
+                    ts.getSoBaoDanh(),
                     ts.getHoTen(),
                     diem,
                     trangThai
@@ -196,14 +196,14 @@ public class NhapDiemForm extends JInternalFrame {
                 
                 // Find ThiSinh
                 ThiSinh thiSinh = danhSachThiSinh.stream()
-                    .filter(ts -> ts.getMaThisinh().equals(maThiSinh))
+                    .filter(ts -> ts.getSoBaoDanh().equals(maThiSinh))
                     .findFirst()
                     .orElse(null);
                 
                 if (thiSinh != null) {
                     // Find or create KetQua
                     KetQua ketQua = danhSachKetQua.stream()
-                        .filter(kq -> kq.getThiSinh().equals(thiSinh))
+                        .filter(kq -> kq.getMaThiSinh().equals(maThiSinh))
                         .findFirst()
                         .orElse(null);
                     
@@ -211,20 +211,20 @@ public class NhapDiemForm extends JInternalFrame {
                         ketQua = new KetQua(thiSinh, selectedKyThi, diem);
                         danhSachKetQua.add(ketQua);
                     } else {
-                        try {
-                            ketQua.nhapDiem(diem, "system", "admin", "Nhập điểm từ form");
-                        } catch (Exception e) {
-                            // Create new KetQua with the score
-                            danhSachKetQua.remove(ketQua);
-                            ketQua = new KetQua(thiSinh, selectedKyThi, diem);
-                            danhSachKetQua.add(ketQua);
-                        }
+                        ketQua.setDiem(diem); // Update existing score
+                        ketQua.setTrangThai(KetQua.TrangThaiBaiThi.DA_CHAM);
                     }
                 }
             }
             
             // Save to database
-            List<KyThi> allKyThi = database.getAllKyThi();
+            List<KyThi> allKyThi = database.loadKyThi();
+            // Find the selectedKyThi in allKyThi and update its ketQua list
+            allKyThi.stream()
+                    .filter(kt -> kt.getMaKyThi().equals(selectedKyThi.getMaKyThi()))
+                    .findFirst()
+                    .ifPresent(kt -> kt.setDanhSachKetQua(danhSachKetQua));
+            
             database.saveKyThi(allKyThi);
             
             JOptionPane.showMessageDialog(this, "Đã lưu điểm thành công!");

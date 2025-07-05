@@ -4,10 +4,16 @@
  */
 package QuanLyKyThi;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author ad
  */
+@XmlRootElement(name = "giamthi")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class GiamThi {
     private String maGiamThi;
     private String HoTen;
@@ -85,7 +91,7 @@ public class GiamThi {
         this.SDT = SDT;
     }
     
-    public boolean phanCong(KyThi kythi) throws KyThiValidationException, DuplicateException {
+    public boolean phanCong(KyThi kythi) throws Exceptions.KyThiValidationException, Exceptions.DuplicateException {
         return kythi.themGiamThi(this);
     }
     

@@ -80,7 +80,7 @@ public class GiamThiListForm extends JInternalFrame {
     private void loadData() {
         tableModel.setRowCount(0);
         try {
-            List<GiamThi> allGiamThi = database.getAllGiamThi();
+            List<GiamThi> allGiamThi = database.loadGiamThi();
             for (GiamThi gt : allGiamThi) {
                 Object[] row = {
                     gt.getMaGiamThi(),
@@ -101,19 +101,13 @@ public class GiamThiListForm extends JInternalFrame {
     
     private void openAddForm() {
         try {
-            List<GiamThi> currentList = database.getAllGiamThi();
+            List<GiamThi> currentList = database.loadGiamThi();
             AddGiamThiForm addForm = new AddGiamThiForm(currentList);
+            getDesktopPane().add(addForm); // Add to desktop pane
             addForm.setVisible(true);
             
-            // Refresh data after adding
-            SwingUtilities.invokeLater(() -> {
-                try {
-                    Thread.sleep(1000); // Wait a bit for the add operation
-                    loadData();
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }
-            });
+            // Refresh data after adding, once the addForm is closed
+            loadData();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, 
                 "Lỗi khi mở form thêm: " + e.getMessage(), 
@@ -152,7 +146,7 @@ public class GiamThiListForm extends JInternalFrame {
             
         if (confirm == JOptionPane.YES_OPTION) {
             try {
-                List<GiamThi> allGiamThi = database.getAllGiamThi();
+                List<GiamThi> allGiamThi = database.loadGiamThi();
                 allGiamThi.removeIf(gt -> gt.getMaGiamThi().equals(maGiamThi));
                 database.saveGiamThi(allGiamThi);
                 

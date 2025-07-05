@@ -80,15 +80,15 @@ public class ThiSinhListForm extends JInternalFrame {
     private void loadData() {
         tableModel.setRowCount(0);
         try {
-            List<ThiSinh> allThiSinh = database.getAllThiSinh();
+            List<ThiSinh> allThiSinh = database.loadThiSinh();
             for (ThiSinh ts : allThiSinh) {
                 Object[] row = {
-                    ts.getMaThisinh(),
+                    ts.getSoBaoDanh(),
                     ts.getHoTen(),
-                    ts.getNgaysinh(),
-                    ts.getDiachi(),
-                    ts.getGioitinh(),
-                    ts.getSdt()
+                    ts.getNgaySinh(),
+                    ts.getDiaChi(),
+                    ts.getGioiTinh(),
+                    ts.getSoDienThoai()
                 };
                 tableModel.addRow(row);
             }
@@ -107,19 +107,13 @@ public class ThiSinhListForm extends JInternalFrame {
     
     private void openAddForm() {
         try {
-            List<ThiSinh> currentList = database.getAllThiSinh();
+            List<ThiSinh> currentList = database.loadThiSinh();
             AddThiSinhForm addForm = new AddThiSinhForm(currentList);
+            getDesktopPane().add(addForm); // Add to desktop pane
             addForm.setVisible(true);
             
-            // Refresh data after adding
-            SwingUtilities.invokeLater(() -> {
-                try {
-                    Thread.sleep(1000); // Wait a bit for the add operation
-                    loadData();
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }
-            });
+            // Refresh data after adding, once the addForm is closed
+            loadData();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, 
                 "Lỗi khi mở form thêm: " + e.getMessage(), 
@@ -158,10 +152,9 @@ public class ThiSinhListForm extends JInternalFrame {
             
         if (confirm == JOptionPane.YES_OPTION) {
             try {
-                // XMLDatabase doesn't have deleteThiSinh method, use removeThiSinh instead
-                List<ThiSinh> allThiSinh = database.getAllThiSinh();
-                allThiSinh.removeIf(ts -> ts.getMaThisinh().equals(maThiSinh));
-                // In a real implementation, we would save back to XML
+                List<ThiSinh> allThiSinh = database.loadThiSinh();
+                allThiSinh.removeIf(ts -> ts.getSoBaoDanh().equals(maThiSinh));
+                database.saveThiSinh(allThiSinh);
                 loadData();
                 JOptionPane.showMessageDialog(this, 
                     "Đã xóa thí sinh thành công!", 

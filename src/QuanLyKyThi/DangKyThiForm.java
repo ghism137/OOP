@@ -107,7 +107,7 @@ public class DangKyThiForm extends JInternalFrame {
         // Load thí sinh
         cmbThiSinh.removeAllItems();
         try {
-            List<ThiSinh> allThiSinh = database.getAllThiSinh();
+            List<ThiSinh> allThiSinh = database.loadThiSinh();
             for (ThiSinh ts : allThiSinh) {
                 cmbThiSinh.addItem(ts);
             }
@@ -120,10 +120,15 @@ public class DangKyThiForm extends JInternalFrame {
         // Load kỳ thi
         tableModel.setRowCount(0);
         try {
-            List<KyThi> allKyThi = database.getAllKyThi();
+            List<KyThi> allKyThi = database.loadKyThi();
             for (KyThi kt : allKyThi) {
-                String trangThai = kt.getDanhSachThiSinh().contains(cmbThiSinh.getSelectedItem()) ? 
-                    "Đã đăng ký" : "Chưa đăng ký";
+                String trangThai = "Chưa đăng ký";
+                if (cmbThiSinh.getSelectedItem() instanceof ThiSinh) {
+                    ThiSinh selectedThiSinh = (ThiSinh) cmbThiSinh.getSelectedItem();
+                    if (kt.getDanhSachThiSinh().stream().anyMatch(ts -> ts.getSoBaoDanh().equals(selectedThiSinh.getSoBaoDanh()))) {
+                        trangThai = "Đã đăng ký";
+                    }
+                }
                     
                 Object[] row = {
                     kt.getMaKyThi(),
@@ -172,7 +177,7 @@ public class DangKyThiForm extends JInternalFrame {
         
         try {
             // Tìm kỳ thi
-            List<KyThi> allKyThi = database.getAllKyThi();
+            List<KyThi> allKyThi = database.loadKyThi();
             KyThi kyThi = allKyThi.stream()
                 .filter(kt -> kt.getMaKyThi().equals(maKyThi))
                 .findFirst()
@@ -186,7 +191,7 @@ public class DangKyThiForm extends JInternalFrame {
             }
             
             // Đăng ký
-            boolean success = selectedThiSinh.dangKythi(kyThi);
+            boolean success = kyThi.themThiSinh(selectedThiSinh);
             
             if (success) {
                 // Lưu lại vào database
@@ -244,14 +249,14 @@ public class DangKyThiForm extends JInternalFrame {
         if (confirm == JOptionPane.YES_OPTION) {
             try {
                 // Tìm kỳ thi và xóa thí sinh
-                List<KyThi> allKyThi = database.getAllKyThi();
+                List<KyThi> allKyThi = database.loadKyThi();
                 KyThi kyThi = allKyThi.stream()
                     .filter(kt -> kt.getMaKyThi().equals(maKyThi))
                     .findFirst()
                     .orElse(null);
                     
                 if (kyThi != null) {
-                    kyThi.getDanhSachThiSinh().remove(selectedThiSinh);
+                    kyThi.getDanhSachThiSinh().removeIf(ts -> ts.getSoBaoDanh().equals(selectedThiSinh.getSoBaoDanh()));
                     database.saveKyThi(allKyThi);
                     
                     JOptionPane.showMessageDialog(this, 

@@ -113,7 +113,6 @@ public class MainGUI extends JFrame {
         
         // Thêm ComponentListener để xử lý khi người dùng thay đổi kích thước
         addComponentListener(new java.awt.event.ComponentAdapter() {
-            @Override
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 handleWindowResize();
             }

@@ -99,8 +99,8 @@ public class ThongKeForm extends JInternalFrame {
     
     private void loadData() {
         try {
-            List<KyThi> allKyThi = database.getAllKyThi();
-            List<ThiSinh> allThiSinh = database.getAllThiSinh();
+            List<KyThi> allKyThi = database.loadKyThi();
+            List<ThiSinh> allThiSinh = database.loadThiSinh();
             
             // Thống kê tổng quan
             generateSummaryStatistics(allKyThi, allThiSinh);
@@ -163,7 +163,7 @@ public class ThongKeForm extends JInternalFrame {
         for (KyThi kt : kyThiList) {
             for (KetQua kq : kt.getDanhSachKetQua()) {
                 if (kq.getDiem() > 0) {
-                    String xepLoai = getXepLoai(kq.getDiem());
+                    String xepLoai = kq.getXepLoai();
                     if (xepLoai.equals("Yếu") || xepLoai.equals("Kém")) {
                         phanLoai.put("Yếu/Kém", phanLoai.get("Yếu/Kém") + 1);
                     } else {
@@ -248,15 +248,7 @@ public class ThongKeForm extends JInternalFrame {
         }
     }
     
-    private String getXepLoai(double diem) {
-        if (diem >= 9.0) return "Xuất sắc";
-        if (diem >= 8.0) return "Giỏi";
-        if (diem >= 7.0) return "Khá";
-        if (diem >= 6.0) return "Trung bình khá";
-        if (diem >= 5.0) return "Trung bình";
-        if (diem >= 4.0) return "Yếu";
-        return "Kém";
-    }
+    
     
     private void exportReport() {
         JOptionPane.showMessageDialog(this, 

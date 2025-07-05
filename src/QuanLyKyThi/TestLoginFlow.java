@@ -48,6 +48,21 @@ public class TestLoginFlow {
             System.out.println("- Username: admin");
             System.out.println("- Password: admin123");
             
+            // Đảm bảo user admin có trong database với mật khẩu đã băm
+            XMLDatabase db = new XMLDatabase();
+            try {
+                List<User> users = db.loadUsers();
+                boolean adminExists = users.stream().anyMatch(u -> u.getUsername().equals("admin"));
+                if (!adminExists) {
+                    User adminUser = new User("admin", PasswordUtil.hashPassword("admin123"), "Administrator", "admin@example.com", "admin");
+                    users.add(adminUser);
+                    db.saveUsers(users);
+                    System.out.println("Test - Đã thêm user admin mẫu vào database.");
+                }
+            } catch (Exception e) {
+                System.err.println("Test - Lỗi khi kiểm tra/thêm user admin mẫu: " + e.getMessage());
+            }
+            
             loginForm.setVisible(true);
         });
     }

@@ -1,19 +1,28 @@
 package QuanLyKyThi;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDateTime;
 
 /**
  * Class đại diện cho người dùng trong hệ thống
  */
+@XmlRootElement(name = "user")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class User {
     private String username;
     private String password;
     private String hoTen;
     private String email;
     private String role; // "admin", "giaovu", "user"
+    @XmlJavaTypeAdapter(DateAdapters.LocalDateTimeAdapter.class)
     private LocalDateTime lastLogin;
     private boolean isActive;
     private boolean isPending; // Tài khoản chờ duyệt (chỉ dành cho admin role)
+    @XmlJavaTypeAdapter(DateAdapters.LocalDateTimeAdapter.class)
     private LocalDateTime createdDate;
 
     public User() {}

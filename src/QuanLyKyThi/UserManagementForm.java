@@ -138,7 +138,7 @@ public class UserManagementForm extends JFrame {
     
     private void loadUserData() {
         try {
-            List<User> users = database.getAllUsers();
+            List<User> users = database.loadUsers();
             tableModel.setRowCount(0); // Clear existing data
             
             String roleFilter = (String) cbRoleFilter.getSelectedItem();
@@ -224,11 +224,16 @@ public class UserManagementForm extends JFrame {
         }
         
         String username = (String) tableModel.getValueAt(selectedRow, 0);
-        User user = database.findUserByUsername(username);
-        
-        if (user != null) {
-            AccountInfoForm accountForm = new AccountInfoForm(user);
-            accountForm.setVisible(true);
+        try {
+            User user = database.findUserByUsername(username);
+            
+            if (user != null) {
+                AccountInfoForm accountForm = new AccountInfoForm(user);
+                accountForm.setVisible(true);
+            }
+        } catch (Exceptions.XMLDatabaseException e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tìm tài khoản: " + e.getMessage(), 
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -275,10 +280,10 @@ public class UserManagementForm extends JFrame {
         }
         
         String username = (String) tableModel.getValueAt(selectedRow, 0);
-        User user = database.findUserByUsername(username);
-        
-        if (user != null) {
-            try {
+        try {
+            User user = database.findUserByUsername(username);
+            
+            if (user != null) {
                 user.setActive(activate);
                 database.updateUser(user);
                 loadUserData();
@@ -287,11 +292,11 @@ public class UserManagementForm extends JFrame {
                 JOptionPane.showMessageDialog(this, "Đã " + action + " tài khoản thành công!", 
                     "Thành công", JOptionPane.INFORMATION_MESSAGE);
                     
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, 
-                    "Lỗi khi thay đổi trạng thái tài khoản: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, 
+                "Lỗi khi thay đổi trạng thái tài khoản: " + e.getMessage(), 
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
     

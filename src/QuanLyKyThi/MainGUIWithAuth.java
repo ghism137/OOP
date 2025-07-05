@@ -183,7 +183,6 @@ public class MainGUIWithAuth extends JFrame {
         
         // Thêm ComponentListener để xử lý khi người dùng thay đổi kích thước
         addComponentListener(new java.awt.event.ComponentAdapter() {
-            @Override
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 handleWindowResize();
             }
@@ -194,7 +193,6 @@ public class MainGUIWithAuth extends JFrame {
         
         // Window closing event
         addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 handleExit();
             }
@@ -430,11 +428,8 @@ public class MainGUIWithAuth extends JFrame {
     }
     
     private void openQuanLyTrangThaiBaiThiForm() {
-        // Mở form quản lý trạng thái bài thi với quyền phù hợp
         QuanLyTrangThaiBaiThiForm form = new QuanLyTrangThaiBaiThiForm(authService.getCurrentUser());
-        
-        // Không sử dụng MDI để form này có thể hoạt động độc lập
-        form.setVisible(true);
+        addInternalFrame(form, "Quản Lý Trạng Thái Bài Thi");
     }
     
     private void openNhapDiemForm() {

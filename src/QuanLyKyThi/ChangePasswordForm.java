@@ -4,8 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Form đổi mật khẩu cho người dùng
@@ -126,19 +124,9 @@ public class ChangePasswordForm extends JFrame {
     }
     
     private void setupEventHandlers() {
-        btnSave.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                changePassword();
-            }
-        });
+        btnSave.addActionListener(e -> changePassword());
         
-        btnCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        btnCancel.addActionListener(e -> dispose());
         
         // Enter key để submit
         getRootPane().setDefaultButton(btnSave);
@@ -158,7 +146,7 @@ public class ChangePasswordForm extends JFrame {
             }
             
             // Check current password
-            if (!verifyCurrentPassword(currentPassword)) {
+            if (!PasswordUtil.verifyPassword(currentPassword, currentUser.getPassword())) {
                 JOptionPane.showMessageDialog(this, "Mật khẩu hiện tại không đúng!", 
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
                 txtCurrentPassword.requestFocus();
@@ -186,7 +174,7 @@ public class ChangePasswordForm extends JFrame {
             }
             
             // Check if new password is different from current
-            if (newPassword.equals(currentPassword)) {
+            if (PasswordUtil.verifyPassword(newPassword, currentUser.getPassword())) {
                 JOptionPane.showMessageDialog(this, "Mật khẩu mới phải khác mật khẩu hiện tại!", 
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
                 txtNewPassword.requestFocus();
@@ -195,7 +183,7 @@ public class ChangePasswordForm extends JFrame {
             }
             
             // Update password
-            currentUser.setPassword(hashPassword(newPassword));
+            currentUser.setPassword(PasswordUtil.hashPassword(newPassword));
             database.updateUser(currentUser);
             
             JOptionPane.showMessageDialog(this, 
@@ -207,16 +195,6 @@ public class ChangePasswordForm extends JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Lỗi khi đổi mật khẩu: " + ex.getMessage(), 
                 "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
-    private boolean verifyCurrentPassword(String inputPassword) {
-        try {
-            String hashedInput = hashPassword(inputPassword);
-            return hashedInput.equals(currentUser.getPassword());
-        } catch (Exception e) {
-            // Fallback: compare plain text (for compatibility)
-            return inputPassword.equals(currentUser.getPassword());
         }
     }
     
@@ -234,21 +212,6 @@ public class ChangePasswordForm extends JFrame {
         // Return true if password meets minimum length requirement
         // Digit and special character are recommended but not required
         return true;
-    }
-    
-    private String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hashedBytes = md.digest(password.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashedBytes) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            // Fallback: return plain text if hashing fails
-            return password;
-        }
     }
     
     // Main method for testing

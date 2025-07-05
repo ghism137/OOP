@@ -122,7 +122,7 @@ public class AddGiamThiForm extends JInternalFrame {
             );
             
             // Check if exists
-            List<GiamThi> existingList = database.getAllGiamThi();
+            List<GiamThi> existingList = database.loadGiamThi();
             boolean exists = existingList.stream()
                 .anyMatch(gt -> gt.getMaGiamThi().equals(newGiamThi.getMaGiamThi()));
             

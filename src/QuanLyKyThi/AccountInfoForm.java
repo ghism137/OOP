@@ -224,26 +224,11 @@ public class AccountInfoForm extends JFrame {
     }
     
     private void setupEventHandlers() {
-        btnEdit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateUserInfo();
-            }
-        });
+        btnEdit.addActionListener(e -> updateUserInfo());
         
-        btnChangePassword.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openChangePasswordForm();
-            }
-        });
+        btnChangePassword.addActionListener(e -> openChangePasswordForm());
         
-        btnClose.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        btnClose.addActionListener(e -> dispose());
     }
     
     private void updateUserInfo() {

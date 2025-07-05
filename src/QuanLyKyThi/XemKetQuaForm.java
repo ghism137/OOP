@@ -106,7 +106,7 @@ public class XemKetQuaForm extends JInternalFrame {
         // Load kỳ thi
         cmbKyThi.removeAllItems();
         try {
-            List<KyThi> allKyThi = database.getAllKyThi();
+            List<KyThi> allKyThi = database.loadKyThi();
             for (KyThi kt : allKyThi) {
                 cmbKyThi.addItem(kt);
             }
@@ -131,7 +131,7 @@ public class XemKetQuaForm extends JInternalFrame {
                 ThiSinh ts = kq.getThiSinh();
                 double diem = kq.getDiem();
                 
-                String xepLoai = getXepLoai(diem);
+                String xepLoai = kq.getXepLoai();
                 String trangThai = kq.getTrangThai().getMoTa();
                 String thoiGian = "";
                 
@@ -144,7 +144,7 @@ public class XemKetQuaForm extends JInternalFrame {
                 }
                 
                 Object[] row = {
-                    ts.getMaThisinh(),
+                    ts.getSoBaoDanh(),
                     ts.getHoTen(),
                     String.format("%.2f", diem),
                     xepLoai,
@@ -163,15 +163,7 @@ public class XemKetQuaForm extends JInternalFrame {
         }
     }
     
-    private String getXepLoai(double diem) {
-        if (diem >= 9.0) return "Xuất sắc";
-        if (diem >= 8.0) return "Giỏi";
-        if (diem >= 7.0) return "Khá";
-        if (diem >= 6.0) return "Trung bình khá";
-        if (diem >= 5.0) return "Trung bình";
-        if (diem >= 4.0) return "Yếu";
-        return "Kém";
-    }
+    
     
     private void sortTableByScore() {
         // Simple bubble sort for demonstration

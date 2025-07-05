@@ -354,23 +354,22 @@ public class LoginForm extends JFrame {
         btnExit.addActionListener(e -> System.exit(0));
         
         // Enter để đăng nhập
-        KeyListener enterKeyListener = new KeyListener() {
+        txtUsername.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     performLogin();
                 }
             }
-            
+        });
+        txtPassword.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyTyped(KeyEvent e) {}
-            
-            @Override
-            public void keyReleased(KeyEvent e) {}
-        };
-        
-        txtUsername.addKeyListener(enterKeyListener);
-        txtPassword.addKeyListener(enterKeyListener);
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    performLogin();
+                }
+            }
+        });
         
         // Tab để chuyển focus
         txtUsername.addActionListener(e -> txtPassword.requestFocus());
@@ -382,24 +381,20 @@ public class LoginForm extends JFrame {
     private void addButtonHoverEffects() {
         // Hiệu ứng hover cho button Đăng nhập
         btnLogin.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnLogin.setBackground(new Color(0, 180, 0)); // Xanh sáng hơn
                 btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
-            
-            @Override
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btnLogin.setBackground(new Color(0, 153, 0)); // Xanh ban đầu
                 btnLogin.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
-            
-            @Override
+
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 btnLogin.setBackground(new Color(0, 120, 0)); // Xanh đậm khi nhấn
             }
-            
-            @Override
+
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 btnLogin.setBackground(new Color(0, 180, 0)); // Quay lại màu hover
             }
@@ -407,24 +402,20 @@ public class LoginForm extends JFrame {
         
         // Hiệu ứng hover cho button Thoát
         btnExit.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnExit.setBackground(new Color(230, 0, 0)); // Đỏ sáng hơn
                 btnExit.setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
-            
-            @Override
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btnExit.setBackground(new Color(204, 0, 0)); // Đỏ ban đầu
                 btnExit.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
-            
-            @Override
+
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 btnExit.setBackground(new Color(180, 0, 0)); // Đỏ đậm khi nhấn
             }
-            
-            @Override
+
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 btnExit.setBackground(new Color(230, 0, 0)); // Quay lại màu hover
             }

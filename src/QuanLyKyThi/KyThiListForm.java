@@ -174,6 +174,8 @@ public class KyThiListForm extends JInternalFrame {
             
         if (confirm == JOptionPane.YES_OPTION) {
             danhSachKyThi.remove(selectedRow);
+            XMLDatabase database = new XMLDatabase();
+            database.saveKyThi(danhSachKyThi);
             loadData();
             JOptionPane.showMessageDialog(this, "Đã xóa kỳ thi thành công!", 
                                         "Thông báo", JOptionPane.INFORMATION_MESSAGE);

@@ -144,7 +144,21 @@ public class AddKyThiForm extends JInternalFrame {
     }
     
     private String generateKyThiId() {
-        return "KT" + String.format("%03d", danhSachKyThi.size() + 1);
+        int maxId = 0;
+        for (KyThi kyThi : danhSachKyThi) {
+            String maKyThi = kyThi.getMaKyThi();
+            if (maKyThi.startsWith("KT") && maKyThi.length() > 2) {
+                try {
+                    int id = Integer.parseInt(maKyThi.substring(2));
+                    if (id > maxId) {
+                        maxId = id;
+                    }
+                } catch (NumberFormatException e) {
+                    // Ignore invalid IDs
+                }
+            }
+        }
+        return "KT" + String.format("%03d", maxId + 1);
     }
     
     private void saveKyThi() {
@@ -173,6 +187,10 @@ public class AddKyThiForm extends JInternalFrame {
             
             // Thêm vào danh sách
             danhSachKyThi.add(kyThi);
+            
+            // Lưu dữ liệu vào XML
+            XMLDatabase database = new XMLDatabase();
+            database.saveKyThi(danhSachKyThi);
             
             // Thông báo thành công
             JOptionPane.showMessageDialog(this, 
