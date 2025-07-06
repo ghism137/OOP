@@ -55,7 +55,7 @@ public class PhieuDangKy {
      * @return true nếu thanh toán thành công
      * @throws PaymentException nếu có lỗi thanh toán
      */
-    public boolean xacNhanTT() throws PaymentException {
+    public boolean xacNhanTT() throws Exceptions.PaymentException {
         return dongPhi();
     }
     

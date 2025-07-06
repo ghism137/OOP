@@ -102,6 +102,18 @@ public class KetQua {
         return ghiChu;
     }
 
+    public String getMaThiSinh() {
+        return maThiSinh;
+    }
+
+    public void setThiSinh(ThiSinh thiSinh) {
+        this.thiSinh = thiSinh;
+    }
+
+    public void setDiem(double diem) {
+        this.diem = diem;
+    }
+
     public void setKyThi(KyThi kyThi) {
         this.kyThi = kyThi;
     }

@@ -136,7 +136,7 @@ public class AddThiSinhForm extends JInternalFrame {
             ThiSinh newThiSinh = new ThiSinh(
                 txtMaThiSinh.getText().trim(),
                 txtHoTen.getText().trim(),
-                ngaySinh,
+                convertToDate(ngaySinh),
                 (String) cmbGioiTinh.getSelectedItem(),
                 txtDiaChi.getText().trim(),
                 txtSDT.getText().trim()

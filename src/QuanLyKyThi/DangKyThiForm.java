@@ -48,7 +48,7 @@ public class DangKyThiForm extends JInternalFrame {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value instanceof ThiSinh) {
                     ThiSinh ts = (ThiSinh) value;
-                    setText(ts.getMaThisinh() + " - " + ts.getHoTen());
+                    setText(ts.getSoBaoDanh() + " - " + ts.getHoTen());
                 }
                 return this;
             }

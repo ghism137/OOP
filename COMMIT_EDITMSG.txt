@@ -1,0 +1,32 @@
+feat: Nâng cấp và hiện đại hóa dự án cho NetBeans 23
+
+Thực hiện một loạt các cải tiến và tái cấu trúc để giúp dự án tương thích và hoạt động hiệu quả hơn trên NetBeans 23, đồng thời nâng cao chất lượng mã nguồn và bảo mật.
+
+Các thay đổi chính bao gồm:
+
+1.  **Nâng cấp môi trường phát triển:**
+    *   Cập nhật phiên bản Java lên Java 11 trong `nbproject/project.properties`.
+
+2.  **Tái cấu trúc xử lý dữ liệu XML (JAXB Integration):**
+    *   Giới thiệu JAXB để thay thế logic đọc/ghi XML thủ công, giúp đơn giản hóa và tăng tính an toàn.
+    *   Tạo các `XmlAdapter` (`DateAdapters.java`) để xử lý các kiểu dữ liệu ngày tháng hiện đại (`LocalDate`, `LocalDateTime`).
+    *   Cập nhật tất cả các lớp Model (`User`, `ThiSinh`, `GiamThi`, `KyThi`, `KetQua`) để sử dụng chú thích JAXB và các `DateAdapter`.
+    *   Tái cấu trúc `XMLDatabase.java` với các phương thức đọc/ghi chung và bổ sung các phương thức quản lý người dùng (`findUserByUsername`, `deleteUser`, `updateUser`).
+
+3.  **Cải thiện bảo mật và tiện ích:**
+    *   Tạo lớp tiện ích `PasswordUtil.java` để xử lý việc băm và xác minh mật khẩu một cách an toàn hơn (sử dụng salt và SHA-256).
+    *   Tái cấu trúc `Exceptions.java` để các lớp ngoại lệ tùy chỉnh trở thành `public static` bên trong một lớp `public final class Exceptions`, cải thiện cấu trúc và khả năng truy cập.
+
+4.  **Tái cấu trúc và sửa lỗi giao diện người dùng (GUI Forms):**
+    *   Thay thế các `ActionListener`, `KeyListener`, `ComponentAdapter`, `WindowAdapter` bằng biểu thức lambda trong nhiều form (`LoginForm`, `MainGUI`, `MainGUIWithAuth`, `AccountInfoForm`, `RegisterForm`, `ChangePasswordForm`) để mã nguồn ngắn gọn và dễ đọc hơn.
+    *   Sửa đổi `openQuanLyTrangThaiBaiThiForm()` trong `MainGUIWithAuth.java` để tạo `JInternalFrame` thay vì `JFrame`.
+    *   Cải thiện logic tạo ID duy nhất trong `AddKyThiForm.java`.
+    *   Sửa lỗi tải/lưu dữ liệu và logic xóa/cập nhật trong các form quản lý danh sách (`KyThiListForm`, `ThiSinhListForm`, `GiamThiListForm`).
+    *   Điều chỉnh logic đăng ký/hủy đăng ký và phân công/hủy phân công trong `DangKyThiForm.java` và `PhanCongGiamThiForm.java` để tương thích với cấu trúc dữ liệu mới và lưu vào XML.
+    *   Cải thiện logic nhập điểm và xem kết quả trong `NhapDiemForm.java` và `XemKetQuaForm.java`, đảm bảo sử dụng đúng các phương thức của lớp `KetQua`.
+    *   Cập nhật `ThongKeForm.java` để sử dụng các phương thức `load` mới và loại bỏ phương thức `getXepLoai()` trùng lặp.
+    *   Cập nhật `UserManagementForm.java` để sử dụng các phương thức quản lý người dùng mới trong `XMLDatabase`.
+
+5.  **Cập nhật các lớp Service và Test:**
+    *   `AuthenticationService.java`: Sử dụng `PasswordUtil` để băm và xác minh mật khẩu, đồng thời loại bỏ phương thức `getAllUsers()` không cần thiết.
+    *   `QuickTest.java` và `TestLoginFlow.java`: Cập nhật logic đăng nhập để sử dụng mật khẩu đã băm cho người dùng `admin` khi tạo dữ liệu mẫu và trong quá trình kiểm thử.

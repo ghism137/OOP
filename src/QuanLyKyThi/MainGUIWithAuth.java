@@ -5,6 +5,8 @@ import java.awt.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
+import java.time.ZoneId;
 
 /**
  * Giao diện chính với tích hợp authentication và XML database
@@ -125,9 +127,9 @@ public class MainGUIWithAuth extends JFrame {
         danhSachKyThi.add(kyThi3);
         
         // Tạo thí sinh mẫu
-        ThiSinh ts1 = new ThiSinh("TS001", "Nguyễn Văn A", LocalDate.of(2003, 5, 10), 
+        ThiSinh ts1 = new ThiSinh("TS001", "Nguyễn Văn A", convertToDate(LocalDate.of(2003, 5, 10)), 
                                   "Nam", "Hà Nội", "0123456789");
-        ThiSinh ts2 = new ThiSinh("TS002", "Trần Thị B", LocalDate.of(2003, 8, 20), 
+        ThiSinh ts2 = new ThiSinh("TS002", "Trần Thị B", convertToDate(LocalDate.of(2003, 8, 20)), 
                                   "Nữ", "Hồ Chí Minh", "0987654321");
         danhSachThiSinh.add(ts1);
         danhSachThiSinh.add(ts2);
@@ -145,7 +147,7 @@ public class MainGUIWithAuth extends JFrame {
             
             // Kiểm tra xem statusLabel đã được khởi tạo chưa
             if (statusLabel != null) {
-                statusLabel.setText("Đã lưu dữ liệu thành công vào XML files | " + 
+                statusLabel.setText("Đã lưu dữ liệu thành công vào XML files | " +
                                    java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss")));
             }
             
@@ -762,4 +764,9 @@ public class MainGUIWithAuth extends JFrame {
         }
     }
     
+    private Date convertToDate(LocalDate dateToConvert) {
+        return java.util.Date.from(dateToConvert.atStartOfDay()
+          .atZone(ZoneId.systemDefault())
+          .toInstant());
+    }
 }

@@ -76,8 +76,7 @@ public class QuanLyTrangThaiBaiThiForm extends JFrame {
         JPanel panelThaoTac = createThaoTacPanel();
         add(panelThaoTac, BorderLayout.SOUTH);
         
-        pack();
-        setLocationRelativeTo(null);
+        
     }
     
     private JPanel createThaoTacPanel() {
@@ -235,7 +234,7 @@ public class QuanLyTrangThaiBaiThiForm extends JFrame {
             JOptionPane.showMessageDialog(this, "Bắt đầu thi thành công!");
             xmlDatabase.saveKetQua(xmlDatabase.getAllKetQua());
             loadKetQuaByKyThi();
-        } catch (StateTransitionException e) {
+        } catch (Exceptions.StateTransitionException e) {
             JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi không xác định: " + e.getMessage());

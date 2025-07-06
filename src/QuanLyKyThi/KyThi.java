@@ -152,6 +152,10 @@ public class KyThi {
         this.danhSachKetQua = danhSachKetQua;
     }
 
+    public void setDanhSachThiSinh(List<ThiSinh> danhSachThiSinh) {
+        this.danhSachThiSinh = danhSachThiSinh;
+    }
+
     public void tinhKetQua() {
         System.out.println("Đang tính kết quả cho kỳ thi: " + tenKyThi);
     }

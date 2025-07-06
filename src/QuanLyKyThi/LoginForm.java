@@ -79,7 +79,7 @@ public class LoginForm extends JFrame {
      * Khởi tạo components với kích thước tùy chỉnh
      */
     private void initComponentsWithSize(int width, int height) {
-        setTitle("🔐 Đăng Nhập - Hệ Thống Quản Lý Kỳ Thi");
+        setTitle("Đăng Nhập - Hệ Thống Quản Lý Kỳ Thi");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(width, height);
         setLocationRelativeTo(null);
